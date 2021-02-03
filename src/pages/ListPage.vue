@@ -16,8 +16,7 @@
       <list-page-filter />
 
       <section class="catalog">
-        <list-page-item />
-
+        <list-page-items-list />
         <list-page-pagination />
       </section>
     </div>
@@ -26,11 +25,11 @@
 
 <script>
 import ListPageFilter from '@/components/listPage/ListPageFilter.vue'
-import ListPageItem from '../components/listPage/ListPageItem.vue'
-import ListPagePagination from '../components/listPage/ListPagePagination.vue'
+import ListPageItemsList from '@/components/listPage/ListPageItemsList.vue'
+import ListPagePagination from '@/components/listPage/ListPagePagination.vue'
 
 export default {
-  components: { ListPageFilter, ListPageItem, ListPagePagination },
+  components: { ListPageFilter, ListPageItemsList, ListPagePagination },
 
 }
 </script>
