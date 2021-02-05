@@ -1,7 +1,6 @@
 <template>
   <div id="loader" v-show="showLoading">
     <img src="loading.gif" style="margin: auto;">
-    <span>Загрузка</span>
   </div>
 </template>
 
@@ -11,7 +10,7 @@ export default {
     showLoading: {
       type: Boolean,
       required: true,
-      default: false
+      default: true
     }
   }
 }
@@ -25,7 +24,7 @@ export default {
   left: 0;
   top: 0;
   position: fixed;
-  opacity: 0.8;
+  opacity: 0.2;
   z-index: 100;
   display: flex;
 }
