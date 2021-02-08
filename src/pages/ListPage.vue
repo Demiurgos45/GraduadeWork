@@ -6,7 +6,7 @@
           Каталог
         </h1>
         <span class="content__info">
-          152 товара
+          {{ itemsCount }}
         </span>
       </div>
     </div>
@@ -44,6 +44,7 @@
 import ListPageFilter from '@/components/listPage/ListPageFilter.vue'
 import ListPageItem from '@/components/listPage/ListPageItem.vue'
 import ListPagePagination from '@/components/listPage/ListPagePagination.vue'
+import choiceOfNoun from '@/helpers/choiceOfNoun'
 
 export default {
   components: { ListPageFilter, ListPageItem, ListPagePagination },
@@ -71,6 +72,9 @@ export default {
     pagesCount() {
       return this.$store.getters.getPagesCount
     },
+    itemsCount() {
+      return this.choiceNounForGoods(this.$store.getters.getItemsCount)
+    },
     categoriesList() {
       const categories = this.$store.getters.getCategories
       return categories ? categories : []
@@ -86,6 +90,10 @@ export default {
   },
 
   methods: {
+    choiceNounForGoods(value) {
+      const nouns = ['товар', 'товара', 'товаров']
+      return value + ' ' + choiceOfNoun(value, nouns)
+    },
     loadItems() {
       this.$store.dispatch('showLoader')
       

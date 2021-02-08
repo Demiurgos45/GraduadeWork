@@ -18,7 +18,7 @@
     </h3>
 
     <span class="catalog__price">
-      {{ item.price }}
+      {{ item.price | numberFormat }} ₽ 
     </span>
 
     <ul class="colors colors--black">
@@ -48,12 +48,18 @@
 </template>
 
 <script>
+import numberFormat from '@/helpers/numberFormat'
+
 export default {
   props: {
     item: {
       type: Object,
       required: true
     }
+  },
+
+  filters: {
+    numberFormat
   },
 
   mounted() {

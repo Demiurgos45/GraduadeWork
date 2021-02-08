@@ -6,6 +6,7 @@ export default {
     userAccessKey: null,
     itemsList: [],
     pagesCount: 0,
+    itemsCount: 0,
     categories: null,
     materials: null,
     seasons: null
@@ -17,6 +18,9 @@ export default {
     },
     getPagesCount(state) {
       return state.pagesCount
+    },
+    getItemsCount(state) {
+      return state.itemsCount
     },
     getCategories(state) {
       if (state.categories) {
@@ -44,6 +48,9 @@ export default {
     },
     setPagesCount(state, pagesCount) {
       state.pagesCount = pagesCount
+    },
+    setItemsCount(state, itemsCount) {
+      state.itemsCount = itemsCount
     },
     setMaterials(state, materials) {
       state.materials = materials
@@ -93,6 +100,8 @@ export default {
           .then( response => {
             context.commit('setItemsList', response.data.items)
             context.commit('setPagesCount', response.data.pagination.pages)
+            context.commit('setItemsCount', response.data.pagination.total)
+            console.log(response.data)
             resolve(context.state.itemsList)
           })
           .catch( () => {

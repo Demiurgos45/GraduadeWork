@@ -86,7 +86,7 @@
       </ul>
 
       <span class="footer__copyright">
-        © 2020 Moire
+        © 2021 Moire
       </span>
     </div>
   </footer>
