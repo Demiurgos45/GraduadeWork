@@ -18,20 +18,61 @@ export default {
 
   computed: {
     showLoading() {
-      return this.$store.getters.getLoaderStatus
+      return (this.$store.getters.getLoaderStatus > 0)
     }
   },
 
   mounted() {
+    this.$store.dispatch('showLoader')
     this.$store.dispatch('getUserAccessKey')
       .then( response => {
         if (!response) {
           console.log('Can\'t receive userAccessKey')
         }
+        this.$store.dispatch('hideLoader')
+      })
+    
+    this.$store.dispatch('showLoader')
+    this.$store.dispatch('getMaterials')
+      .then( response => {
+        if (!response) {
+          console.log('Can\'t receive materials')
+        }
+      })
+      .catch( () => {
+
+      })
+      .then( () => {
+        this.$store.dispatch('hideLoader')
       })
 
+    this.$store.dispatch('showLoader')
+    this.$store.dispatch('getCategories')
+      .then( response => {
+        if (!response) {
+          console.log('Can\'t receive categories')
+        }
+      })
+      .catch( () => {
 
-    this.$store.dispatch('hideLoader')
+      })
+      .then( () => {
+        this.$store.dispatch('hideLoader')
+      })
+    
+    this.$store.dispatch('showLoader')
+    this.$store.dispatch('getSeasons')
+      .then( response => {
+        if (!response) {
+          console.log('Can\'t receive seasons')
+        }
+      })
+      .catch( () => {
+
+      })
+      .then( () => {
+        this.$store.dispatch('hideLoader')
+      })
   }
 }
 </script>

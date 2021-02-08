@@ -1,10 +1,15 @@
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#">
+    <router-link 
+      class="catalog__pic"
+      href="#"
+      :to="{name: 'itemPage', params: {id: item.id}}"
+    >
       <img
         src=""
-        :alt="item.title">
-    </a>
+        :alt="item.title"
+      >
+    </router-link>
 
     <h3 class="catalog__title">
       <a href="#">
@@ -52,7 +57,7 @@ export default {
   },
 
   mounted() {
-    console.log(this.item)
+    
   }
 }
 </script>

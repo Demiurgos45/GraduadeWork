@@ -13,7 +13,13 @@
 
     <div class="content__catalog">
       
-      <list-page-filter />
+      <list-page-filter
+        v-bind.sync="filterState"
+        :categories-list="categoriesList"
+        :materials-list="materialsList"
+        :seasons-list="seasonsList"
+        :current-page.sync="currentPage"
+      />
 
       <section class="catalog">
         
@@ -50,7 +56,7 @@ export default {
         minPrice: 0,
         maxPrice: 0,
         categoryId: +this.$route.params.id || 0,
-        materilIds: [],
+        materialIds: [],
         seasonIds: []
       },
       isLoadingError: false
@@ -64,6 +70,18 @@ export default {
     },
     pagesCount() {
       return this.$store.getters.getPagesCount
+    },
+    categoriesList() {
+      const categories = this.$store.getters.getCategories
+      return categories ? categories : []
+    },
+    materialsList() {
+      const materials = this.$store.getters.getMaterials
+      return materials ? materials : []
+    },
+    seasonsList() {
+      const seasons = this.$store.getters.getSeasons
+      return seasons ? seasons : []
     }
   },
 
@@ -91,12 +109,22 @@ export default {
   },
 
   mounted() {
-    this.loadItems() 
+    
   },
 
   watch: {
-    currentPage() {
-      this.loadItems()
+    currentPage: {
+      immediate: true,
+      handler() {
+        this.loadItems()
+      }
+    },
+    
+    filterState: {
+      deep: true,
+      handler() {
+        this.loadItems()
+      }
     }
   }
 }

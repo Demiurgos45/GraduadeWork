@@ -1,6 +1,6 @@
 export default {
   state: {
-    showLoader: true
+    showLoader: 0
   },
 
   getters: {
@@ -10,18 +10,21 @@ export default {
   },
 
   mutations: {
-    setLoaderStatus(state, status) {
-      state.showLoader = status
-    }
+    addLoader(state) {
+      state.showLoader++
+    },
+    subLoader(state) {
+      state.showLoader--
+    },
   },
 
   actions: {
     showLoader(context) {
-      context.commit('setLoaderStatus', true)
+      context.commit('addLoader')
     },
 
     hideLoader(context) {
-      context.commit('setLoaderStatus', false)
+      context.commit('subLoader')
     }
   }
 }
