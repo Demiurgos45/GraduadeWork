@@ -49,55 +49,17 @@
         </label>
       </fieldset>
 
-      <fieldset class="form__block">
-        <legend class="form__legend">Материал</legend>
-        <ul class="check-list">
-          <li
-            v-for="material in materialsList"
-            :key="material.id"
-            class="check-list__item"
-          >
-            <label class="check-list__label">
-              <input
-                class="check-list__check sr-only"
-                type="checkbox"
-                :id="material.slug"
-                :value="material.id"
-                v-model="currentMaterialIds"
-              >
-              <span class="check-list__desc">
-                {{ material.title }}
-                <span>({{ material.productsCount }})</span>
-              </span>
-            </label>
-          </li>
-        </ul>
-      </fieldset>
+      <base-checkboxes-set 
+        title="Материалы"
+        :cases="materialsList"
+        :selected-cases.sync="currentMaterialIds"
+      />
 
-      <fieldset class="form__block">
-        <legend class="form__legend">Коллекция</legend>
-        <ul class="check-list">
-          <li
-            v-for="season in seasonsList"
-            :key="season.id"
-            class="check-list__item"
-          >
-            <label class="check-list__label">
-              <input
-                class="check-list__check sr-only"
-                type="checkbox"
-                :id="season.slug"
-                :value="season.id"
-                v-model="currentSasonIds"
-              >
-              <span class="check-list__desc">
-                {{ season.title }}
-                <span>({{ season.productsCount }})</span>
-              </span>
-            </label>
-          </li>
-        </ul>
-      </fieldset>
+      <base-checkboxes-set 
+        title="Коллекция"
+        :cases="seasonsList"
+        :selected-cases.sync="currentSasonIds"
+      />
 
       <button class="filter__submit button button--primery" type="submit">
         Применить
@@ -110,7 +72,9 @@
 </template>
 
 <script>
+import BaseCheckboxesSet from '../common/BaseCheckboxesSet.vue'
 export default {
+  components: { BaseCheckboxesSet },
   props: {
     minPrice: {
       type: Number,

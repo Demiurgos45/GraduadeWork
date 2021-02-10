@@ -3,10 +3,10 @@
     <router-link 
       class="catalog__pic"
       href="#"
-      :to="{name: 'itemPage', params: {id: item.id}}"
+      :to="{name: 'itemPage', params: {id: item.id, color: selectedColorId}}"
     >
       <img
-        src=""
+        :src="imageLink"
         :alt="item.title"
       >
     </router-link>
@@ -21,40 +21,44 @@
       {{ item.price | numberFormat }} ₽ 
     </span>
 
-    <ul class="colors colors--black">
-      <li class="colors__item">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#73B6EA" checked="">
-          <span class="colors__value" style="background-color: #73B6EA;">
-          </span>
-        </label>
-      </li>
-      <li class="colors__item">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#8BE000">
-          <span class="colors__value" style="background-color: #8BE000;">
-          </span>
-        </label>
-      </li>
-      <li class="colors__item">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#222">
-          <span class="colors__value" style="background-color: #222;">
-          </span>
-        </label>
-      </li>
-    </ul>
+    <base-color-selector
+      v-if="item.colors.length > 0"
+      :colors-list="item.colors"
+      :color-id.sync="selectedColorId"
+      :selector-id="item.slug"
+    />
   </li>
 </template>
 
 <script>
 import numberFormat from '@/helpers/numberFormat'
+import BaseColorSelector from '@/components/common/BaseColorSelector.vue'
 
 export default {
+  components: { BaseColorSelector },
   props: {
     item: {
       type: Object,
       required: true
+    }
+  },
+
+  data() {
+    return {
+      selectedColorId: this.item.colors[0].color.id
+    }
+  },
+
+  computed: {
+    imageLink() {
+      const gallery = this.item.colors.find(clr => clr.color.id === this.selectedColorId).gallery
+      if (gallery) {
+        return gallery[0].file.url
+      }
+      else {
+        return ''
+      }
+      
     }
   },
 

@@ -5,15 +5,15 @@ import ErrorPage from '@/pages/ErrorPage'
 import ItemPage from '@/pages/ItemPage'
 import CartPage from '@/pages/CartPage'
 import OrderPage from '@/pages/OrderPage'
-import orderInfoPage from '@/pages/OrderInfoPage'
+import OrderInfoPage from '@/pages/OrderInfoPage'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/list/:id',
     name: 'listPage',
-    component: ListPage,
-    path: '/list/:id'
+    component: ListPage
   },
 
   {
@@ -27,33 +27,38 @@ const routes = [
   },
 
   {
+    path: '/item/:id/:color',
     name: 'itemPage',
-    component: ItemPage,
-    path: '/item/:id'
+    component: ItemPage
   },
 
   {
+    path: '/item/:id',
+    redirect: '/item/:id/0'
+  },
+
+  {
+    path: '/cart/',
     name: 'cartPage',
-    component: CartPage,
-    path: '/cart/'
+    component: CartPage
   },
 
   {
+    path: '/order/',
     name: 'orderPage',
-    component: OrderPage,
-    path: '/order/'
+    component: OrderPage
   },
 
   {
+    path: '/order/:id',
     name: 'orderInfoPage',
-    component: orderInfoPage,
-    path: '/order/:id'
+    component: OrderInfoPage
   },
 
   {
+    path: '*',
     name: 'errorPage',
-    component: ErrorPage,
-    path: '*'
+    component: ErrorPage
   }
 ]
 

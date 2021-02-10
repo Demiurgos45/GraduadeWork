@@ -6,10 +6,7 @@ export default {
     userAccessKey: null,
     itemsList: [],
     pagesCount: 0,
-    itemsCount: 0,
-    categories: null,
-    materials: null,
-    seasons: null
+    itemsCount: 0
   },
 
   getters: {
@@ -21,21 +18,6 @@ export default {
     },
     getItemsCount(state) {
       return state.itemsCount
-    },
-    getCategories(state) {
-      if (state.categories) {
-        return state.categories.filter(category => category.title !== 'test')
-      }
-      return null
-    },
-    getMaterials(state) {
-      if (state.materials) {
-        return state.materials.filter(material => material.title !== 'test')
-      }
-      return null
-    },
-    getSeasons(state) {
-      return state.seasons
     }
   },
 
@@ -51,15 +33,6 @@ export default {
     },
     setItemsCount(state, itemsCount) {
       state.itemsCount = itemsCount
-    },
-    setMaterials(state, materials) {
-      state.materials = materials
-    },
-    setCategories(state, categories) {
-      state.categories = categories
-    },
-    setSeasons(state, seasons) {
-      state.seasons = seasons
     }
   },
 
@@ -110,54 +83,6 @@ export default {
             reject(context.state.itemsList)
           })
       })     
-    },
-
-    getMaterials(context) {
-      return new Promise ( (resolve) => {
-        axios
-          .get(API_BASE_URL + '/materials')
-          .then( response => {
-            context.commit('setMaterials', response.data.items)
-          })
-          .catch( () => {
-            // There's nothing to do here yet
-          })
-          .then( () => {
-            resolve(context.state.materials)
-          })
-      })
-    },
-
-    getCategories(context) {
-      return new Promise ( (resolve) => {
-        axios
-          .get(API_BASE_URL + '/productCategories')
-          .then( response => {
-            context.commit('setCategories', response.data.items)
-          })
-          .catch( () => {
-            // There's nothing to do here yet
-          })
-          .then( () => {
-            resolve(context.state.categories)
-          })
-      })
-    },
-
-    getSeasons(context) {
-      return new Promise ( (resolve) => {
-        axios
-          .get(API_BASE_URL + '/seasons')
-          .then( response => {
-            context.commit('setSeasons', response.data.items)
-          })
-          .catch( () => {
-            // There's nothing to do here yet
-          })
-          .then( () => {
-            resolve(context.state.seasons)
-          })
-      })
     }
     
   }

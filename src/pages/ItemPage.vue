@@ -1,20 +1,37 @@
 <template>
-  <main class="content container">
+  <main
+    v-if="isLoadingError"
+    class="content container"
+  >
+    <h3>Товар не найден</h3>
+  </main>
+
+  <main v-else
+    class="content container"
+  >
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
+          <router-link
+            class="breadcrumbs__link"
+            href="#"
+            :to="{name: 'listPage', params: {id: 0}}"
+          >
             Каталог
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
-            Носки
-          </a>
+          <router-link
+            class="breadcrumbs__link"
+            href="#"
+            :to="{name: 'listPage', params: {id: itemInfo.category.id}}"
+          >
+            {{ itemInfo.category.title }}
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
-            Носки с принтом мороженое
+            {{ itemInfo.title }}
           </a>
         </li>
       </ul>
@@ -23,76 +40,62 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" src="img/product-square-1.jpg" srcset="img/product-square-1@2x.jpg 2x" alt="Название товара">
+          <img
+            width="570"
+            height="570"
+            src=""
+            :alt="itemInfo.title"
+          >
         </div>
         <ul class="pics__list">
           <li class="pics__item">
             <a href="" class="pics__link pics__link--current">
-              <img width="98" height="98" src="img/product-square-2.jpg" srcset="img/product-square-2@2x.jpg 2x" alt="Название товара">
+              <img
+                width="98"
+                height="98"
+                src=""
+                :alt="itemInfo.title">
             </a>
           </li>
           <li class="pics__item">
             <a href="" class="pics__link">
-              <img width="98" height="98" src="img/product-square-3.jpg" srcset="img/product-square-3@2x.jpg 2x" alt="Название товара">
+              <img
+                width="98"
+                height="98"
+                src=""
+                :alt="itemInfo.title">
             </a>
           </li>
         </ul>
       </div>
 
       <div class="item__info">
-        <span class="item__code">Артикул: 150030</span>
+        <span class="item__code">Артикул: {{ itemInfo.id }}</span>
         <h2 class="item__title">
-          Смартфон Xiaomi Mi Mix 3 6/128GB
+          {{ itemInfo.title }}
         </h2>
         <div class="item__form">
           <form class="form" action="#" method="POST">
             <div class="item__row item__row--center">
-              <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
+              <base-quantity-input
+                :max-quantity="avaliableQuantity"
+                :quantity.sync="itemQuantity"
+              />
 
-                <input type="text" value="1" name="count">
-
-                <button type="button" aria-label="Добавить один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
-              
               <b class="item__price">
-                18 990 ₽
+                {{ itemInfo.price | numberFormat }} ₽
               </b>
             </div>
 
             <div class="item__row">
               <fieldset class="form__block">
                 <legend class="form__legend">Цвет</legend>
-                <ul class="colors colors--black">
-                  <li class="colors__item">
-                    <label class="colors__label">
-                      <input class="colors__radio sr-only" type="radio" name="color-item" value="blue" checked="">
-                      <span class="colors__value" style="background-color: #73B6EA;">
-                      </span>
-                    </label>
-                  </li>
-                  <li class="colors__item">
-                    <label class="colors__label">
-                      <input class="colors__radio sr-only" type="radio" name="color-item" value="yellow">
-                      <span class="colors__value" style="background-color: #FFBE15;">
-                      </span>
-                    </label>
-                  </li>
-                  <li class="colors__item">
-                    <label class="colors__label">
-                      <input class="colors__radio sr-only" type="radio" name="color-item" value="gray">
-                      <span class="colors__value" style="background-color: #939393;">
-                    </span></label>
-                  </li>
-                </ul>
+                <base-color-selector 
+                  v-if="itemInfo.colors.length > 0"
+                  :colors-list="itemInfo.colors"
+                  :color-id.sync="selectedColorId"
+                  :selector-id="itemInfo.slug"
+                />
               </fieldset>
 
 
@@ -154,8 +157,80 @@
 </template>
 
 <script>
-export default {
+import numberFormat from '@/helpers/numberFormat'
+import BaseColorSelector from '@/components/common/BaseColorSelector.vue'
+import BaseQuantityInput from '@/components/common/BaseQuantityInput.vue'
 
+export default {
+  components: { BaseColorSelector, BaseQuantityInput },
+  filters: {
+    numberFormat
+  },
+
+  data() {
+    return {
+      routerColor: +this.$route.params.color,
+      isLoadingError: true,
+      itemQuantity: 1
+    }
+  },
+
+  computed: {
+    itemInfo() {
+      return this.$store.getters.getItemInfo
+    },
+    avaliableQuantity() {
+      return this.itemInfo.materials.reduce((sum, item) => sum + item.productsCount, 0)
+    },
+    selectedColorId: {
+      get() {
+        if ((this.routerColor === '0') && (this.itemInfo)) {
+          return this.itemInfo.colors[0].color.id
+        }
+        return this.routerColor
+      },
+      set(val) {
+        this.routerColor = val
+      }
+    },
+
+    imageLink() {
+      const gallery = this.itemInfo.colors.find(clr => clr.color.id === this.selectedColorId).gallery
+      
+      if (gallery) {
+        return gallery[0].file.url
+      }
+      
+      return ''
+    }
+  },
+
+  methods: {
+    getItemInfo() {
+      this.isLoadingError = true
+      this.$store.dispatch('showLoader')
+
+      this.$store.dispatch('getItemInfo', this.$route.params.id)
+        .then( () => {
+          this.isLoadingError = false
+        })
+        .catch( () => {
+          
+        })
+        .then( () => {
+          this.$store.dispatch('hideLoader')
+        })
+    }
+  },
+
+  watch: {
+    '$route.params.id' : {
+      immediate: true,
+      handler() {
+        this.getItemInfo()
+      }
+    }
+  }
 }
 </script>
 
