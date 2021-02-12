@@ -43,7 +43,7 @@
           <img
             width="570"
             height="570"
-            src=""
+            :src="imageLink"
             :alt="itemInfo.title"
           >
         </div>
@@ -83,7 +83,7 @@
               />
 
               <b class="item__price">
-                {{ itemInfo.price | numberFormat }} ₽
+                {{ itemInfo.price * itemQuantity| numberFormat }} ₽
               </b>
             </div>
 
@@ -158,8 +158,8 @@
 
 <script>
 import numberFormat from '@/helpers/numberFormat'
-import BaseColorSelector from '@/components/common/BaseColorSelector.vue'
-import BaseQuantityInput from '@/components/common/BaseQuantityInput.vue'
+import BaseColorSelector from '@/components/common/BaseColorSelector'
+import BaseQuantityInput from '@/components/common/BaseQuantityInput'
 
 export default {
   components: { BaseColorSelector, BaseQuantityInput },

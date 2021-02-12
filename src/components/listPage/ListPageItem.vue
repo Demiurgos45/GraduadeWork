@@ -32,7 +32,7 @@
 
 <script>
 import numberFormat from '@/helpers/numberFormat'
-import BaseColorSelector from '@/components/common/BaseColorSelector.vue'
+import BaseColorSelector from '@/components/common/BaseColorSelector'
 
 export default {
   components: { BaseColorSelector },

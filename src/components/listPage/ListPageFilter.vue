@@ -30,23 +30,10 @@
 
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
-        <label class="form__label form__label--select">
-          <select
-            class="form__select"
-            type="text"
-            name="category"
-            v-model.number="currentCategoryId"
-          >
-            <option value="0">Все категории</option>
-            <option
-              v-for="category in categoriesList" 
-              :key="category.id"
-              :value="category.id"
-            >
-              {{ category.title }}
-            </option>
-          </select>
-        </label>
+        <base-select
+          :items="categoriesList"
+          :selected-item.sync="currentCategoryId"
+        />
       </fieldset>
 
       <base-checkboxes-set 
@@ -72,9 +59,11 @@
 </template>
 
 <script>
-import BaseCheckboxesSet from '../common/BaseCheckboxesSet.vue'
+import BaseCheckboxesSet from '@/components/common/BaseCheckboxesSet'
+import BaseSelect from '@/components/common/BaseSelect'
+
 export default {
-  components: { BaseCheckboxesSet },
+  components: { BaseCheckboxesSet, BaseSelect },
   props: {
     minPrice: {
       type: Number,
@@ -118,7 +107,7 @@ export default {
     return {
       currentMinPrice: 0,
       currentMaxPrice: 0,
-      currentCategoryId: 0,
+      currentCategoryId: this.categoryId,
       currentMaterialIds: [],
       currentSasonIds: []
     }

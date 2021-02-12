@@ -2,6 +2,7 @@
 node_modules
 /dist
 /public/img
+jsconfig.json
 
 # local env files
 .env.local

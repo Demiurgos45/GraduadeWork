@@ -7,7 +7,7 @@
         </h1>
         <span class="content__info">
           {{ itemsCount }}
-        </span>
+        </span>        
       </div>
     </div>
 
@@ -31,28 +31,46 @@
           />
         </ul>
 
-        <list-page-pagination 
-          v-model="currentPage"
-          :pagesCount="pagesCount"
-        />
+        <div class="div-table">
+          <div class="div-tr">
+            
+            <div class="div-td">
+              <list-page-pagination 
+                v-model="currentPage"
+                :pagesCount="pagesCount"
+              />
+            </div>
+            <div class="div-td">
+              <base-select 
+                :items="perPageList"
+                :selected-item.sync="itemsPerPage"
+                legend="Товаров <br>на страницу"
+                scrollStyle="width: auto;"
+              />
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   </main>
 </template>
 
 <script>
-import ListPageFilter from '@/components/listPage/ListPageFilter.vue'
-import ListPageItem from '@/components/listPage/ListPageItem.vue'
-import ListPagePagination from '@/components/listPage/ListPagePagination.vue'
+import ListPageFilter from '@/components/listPage/ListPageFilter'
+import ListPageItem from '@/components/listPage/ListPageItem'
+import ListPagePagination from '@/components/listPage/ListPagePagination'
 import choiceOfNoun from '@/helpers/choiceOfNoun'
+import { itemsPerPageList } from '@/config'
+import BaseSelect from '@/components/common/BaseSelect'
 
 export default {
-  components: { ListPageFilter, ListPageItem, ListPagePagination },
+  components: { ListPageFilter, ListPageItem, ListPagePagination, BaseSelect },
 
   data() {
     return {
       currentPage: 1,
       itemsPerPage: 3,
+      perPageList: itemsPerPageList,
       filterState: {
         minPrice: 0,
         maxPrice: 0,
@@ -127,6 +145,12 @@ export default {
         this.loadItems()
       }
     },
+
+    itemsPerPage: {
+      handler() {
+        this.loadItems()
+      }
+    },
     
     filterState: {
       deep: true,
@@ -139,5 +163,18 @@ export default {
 </script>
 
 <style>
-
+.div-table{
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+.div-tr{
+  display: table-row;
+}
+.div-td{
+  display: table-cell;
+  text-align: center;
+  border: none;
+  vertical-align: middle;
+}
 </style>

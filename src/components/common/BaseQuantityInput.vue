@@ -3,6 +3,7 @@
     <button
       type="button"
       aria-label="Убрать один товар"
+      class="button"
       @click.prevent="currentQuantity--"
       :disabled="btnMinusDisabled"
     >
@@ -19,6 +20,7 @@
 
     <button
       type="button"
+      class="button"
       aria-label="Добавить один товар"
       @click.prevent="currentQuantity++"
       :disabled="btnPlusDisabled"

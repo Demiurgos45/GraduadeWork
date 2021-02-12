@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import TheFooter from '@/components/TheFooter.vue'
-import TheHeader from '@/components/TheHeader.vue'
-import TheLoader from '@/components/TheLoader.vue'
+import TheFooter from '@/components/TheFooter'
+import TheHeader from '@/components/TheHeader'
+import TheLoader from '@/components/TheLoader'
 
 export default {
   components: { TheHeader, TheFooter, TheLoader },

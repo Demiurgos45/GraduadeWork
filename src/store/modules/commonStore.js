@@ -67,7 +67,9 @@ export default {
         axios
           .get(API_BASE_URL + '/productCategories')
           .then( response => {
-            context.commit('setCategories', response.data.items)
+            const categories = response.data.items
+            categories.unshift({id: 0, title: 'Все категории'})
+            context.commit('setCategories', categories)
           })
           .catch( () => {
             // There's nothing to do here yet
