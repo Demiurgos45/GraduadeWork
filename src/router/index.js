@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import ListPage from '@/pages/ListPage'
 import ErrorPage from '@/pages/ErrorPage'
 import ItemPage from '@/pages/ItemPage'
-import CartPage from '@/pages/CartPage'
+import BasketPage from '@/pages/BasketPage'
 import OrderPage from '@/pages/OrderPage'
 import OrderInfoPage from '@/pages/OrderInfoPage'
 
@@ -39,8 +39,8 @@ const routes = [
 
   {
     path: '/cart/',
-    name: 'cartPage',
-    component: CartPage
+    name: 'basketPage',
+    component: BasketPage
   },
 
   {

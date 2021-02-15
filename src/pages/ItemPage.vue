@@ -75,7 +75,12 @@
           {{ itemInfo.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form
+            class="form"
+            action="#"
+            method="POST"
+            @submit.prevent="addToBasket"
+          >
             <div class="item__row item__row--center">
               <base-quantity-input
                 :max-quantity="avaliableQuantity"
@@ -101,19 +106,18 @@
 
               <fieldset class="form__block">
                 <legend class="form__legend">Размер</legend>
-                <label class="form__label form__label--small form__label--select">
-                  <select class="form__select" type="text" name="category">
-                    <option value="value1">37-39</option>
-                    <option value="value2">40-42</option>
-                    <option value="value3">42-50</option>
-                  </select>
-                </label>
+                <base-select
+                  :items="itemInfo.sizes"
+                  :selected-item.sync="selectedSizeId"
+                />
               </fieldset>
             </div>
             
             <button class="item__button button button--primery" type="submit">
               В корзину
             </button>
+            <div v-show="itemAddSending">Добавление товара</div>
+            <div v-show="itemAdded">Товар добавлен</div>
           </form>
         </div>
       </div>
@@ -160,9 +164,10 @@
 import numberFormat from '@/helpers/numberFormat'
 import BaseColorSelector from '@/components/common/BaseColorSelector'
 import BaseQuantityInput from '@/components/common/BaseQuantityInput'
+import BaseSelect from '@/components/common/BaseSelect'
 
 export default {
-  components: { BaseColorSelector, BaseQuantityInput },
+  components: { BaseColorSelector, BaseQuantityInput, BaseSelect },
   filters: {
     numberFormat
   },
@@ -171,7 +176,10 @@ export default {
     return {
       routerColor: +this.$route.params.color,
       isLoadingError: true,
-      itemQuantity: 1
+      itemQuantity: 1,
+      itemSize: 0,
+      itemAddSending: false,
+      itemAdded: false
     }
   },
 
@@ -193,7 +201,17 @@ export default {
         this.routerColor = val
       }
     },
-
+    selectedSizeId: {
+      get() {
+        if (this.itemSize === 0) {
+          return this.itemInfo.sizes[0].id
+        }
+        return this.itemSize
+      },
+      set(val) {
+        this.itemSize = val
+      }
+    },
     imageLink() {
       const gallery = this.itemInfo.colors.find(clr => clr.color.id === this.selectedColorId).gallery
       
@@ -220,6 +238,30 @@ export default {
         .then( () => {
           this.$store.dispatch('hideLoader')
         })
+    },
+
+    addToBasket() {
+      if (!this.itemAddSending) {
+        this.itemAdded = false
+        this.itemAddSending = true
+
+        this.$store.dispatch('addToBasket', {
+          productId: this.itemInfo.id,
+          colorId: this.selectedColorId,
+          sizeId: this.selectedSizeId,
+          quantity: this.itemQuantity
+        })
+          .then( () => {
+            this.$store.dispatch('loadBasket')
+            this.itemAdded = true
+          })
+          .catch( (error) => {
+            console.log(error)
+          })
+          .then( () => {
+            this.itemAddSending = false
+          })
+      }
     }
   },
 

@@ -6,7 +6,8 @@ export default {
     userAccessKey: null,
     itemsList: [],
     pagesCount: 0,
-    itemsCount: 0
+    itemsCount: 0,
+    userBasket: null
   },
 
   getters: {
@@ -18,6 +19,18 @@ export default {
     },
     getItemsCount(state) {
       return state.itemsCount
+    },
+    getBasketProductsCount(state) {
+      return state.userBasket ? state.userBasket.items.length : 0
+    },
+    getBasketItemsCount(state) {
+      return state.userBasket ? state.userBasket.items.reduce( (sum, item) => sum + item.quantity, 0) : 0
+    },
+    getBasketItems(state) {
+      return state.userBasket ? state.userBasket.items : []
+    },
+    getBasketPrice(state) {
+      return state.userBasket ? state.userBasket.items.reduce( (sum, item) => sum + item.quantity * item.price, 0): 0
     }
   },
 
@@ -33,12 +46,33 @@ export default {
     },
     setItemsCount(state, itemsCount) {
       state.itemsCount = itemsCount
+    },
+    setUserBasket(state, basket) {
+      state.userBasket = basket
     }
   },
 
   actions: {
+    loadBasket(context) {
+      return new Promise ( (resolve, reject) => {
+        axios
+          .get(API_BASE_URL + '/baskets', {
+            params: {
+              userAccessKey: context.state.userAccessKey
+            }
+          })
+          .then( (response) => {
+            context.commit('setUserBasket', response.data)
+            resolve()
+          })
+          .catch( (error) => {
+            reject(error)
+          })
+      })
+    },
+
     getUserAccessKey(context) {
-      return new Promise ( (resolve) => {
+      return new Promise ( (resolve, reject) => {
         let userAccessKey = localStorage.getItem('userAccessKey')
         
         if (!userAccessKey) {
@@ -47,12 +81,10 @@ export default {
             .then( response => {
               context.commit('setUserAccessKey', response.data.accessKey)
               localStorage.setItem('userAccessKey', response.data.accessKey)
+              resolve()
             })
-            .catch( () => {
-              // There's nothing to do here yet
-            })
-            .then( () => {
-              resolve(context.state.userAccessKey)
+            .catch( (error) => {
+              reject(error)
             })
         } 
         else {
@@ -74,7 +106,6 @@ export default {
             context.commit('setItemsList', response.data.items)
             context.commit('setPagesCount', response.data.pagination.pages)
             context.commit('setItemsCount', response.data.pagination.total)
-            console.log(response.data)
             resolve(context.state.itemsList)
           })
           .catch( () => {
@@ -83,6 +114,63 @@ export default {
             reject(context.state.itemsList)
           })
       })     
+    },
+
+    addToBasket(context, params) {
+      return new Promise ( (resolve, reject) => {
+        axios
+          .post(API_BASE_URL + '/baskets/products',
+            {...params},
+            {
+              params: {
+                userAccessKey: context.state.userAccessKey
+              }
+          })
+          .then( () => {
+            resolve()
+          })
+          .catch( error => {
+            console.log(error)
+            reject()
+          })
+      })
+    },
+
+    updateQuantity(context, params) {
+      if (params.quantity > 0) {
+        axios
+          .put(API_BASE_URL + '/baskets/products',
+            {...params},
+            {
+              params: {
+                userAccessKey: context.state.userAccessKey
+              }
+            })
+          .then( (response) => {
+            context.commit('setUserBasket', response.data)
+          })
+          .catch( (error) => {
+            console.log(error)
+          })
+      }
+    },
+
+    deleteItem(context, id) {
+      axios
+        .delete(API_BASE_URL + '/baskets/products', {
+          params: {
+            userAccessKey: context.state.userAccessKey
+          },
+          data: {
+            basketItemId: id
+          }
+        })
+        .then( (response) => {
+          context.commit('setUserBasket', response.data)
+        })
+        .catch( (error) => {
+          console.log(error)
+        })
     }
     
   }

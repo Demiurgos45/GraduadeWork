@@ -122,11 +122,11 @@ export default {
       }
 
       this.$store.dispatch('loadItems', filter)
-        .then( response => {
-          console.log(response)
+        .then( () => {
+
         })
-        .catch( error => {
-          console.log(error)
+        .catch( () => {
+          
         })
         .then( () => {
           this.$store.dispatch('hideLoader')
@@ -163,15 +163,15 @@ export default {
 </script>
 
 <style>
-.div-table{
+.div-table {
   display: table;
   width: 100%;
   border-collapse: collapse;
 }
-.div-tr{
+.div-tr {
   display: table-row;
 }
-.div-td{
+.div-td {
   display: table-cell;
   text-align: center;
   border: none;

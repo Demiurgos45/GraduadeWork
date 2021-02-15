@@ -25,12 +25,23 @@ export default {
   mounted() {
     this.$store.dispatch('showLoader')
     this.$store.dispatch('getUserAccessKey')
-      .then( response => {
-        if (!response) {
-          console.log('Can\'t receive userAccessKey')
-        }
+      .then( () => {
+        this.$store.dispatch('loadBasket')
+          .then( () => {
+
+          })
+          .catch( () => {
+            console.log('Can\'t load basket')
+          })
+          .then( () => {
+            this.$store.dispatch('hideLoader')
+          })
+      })
+      .catch( () => {
+        console.log('Can\'t receive userAccessKey')
         this.$store.dispatch('hideLoader')
       })
+
     
     this.$store.dispatch('showLoader')
     this.$store.dispatch('getMaterials')
