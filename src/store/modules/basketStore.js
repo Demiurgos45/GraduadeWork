@@ -108,10 +108,10 @@ export default {
             context.commit('setItemsCount', response.data.pagination.total)
             resolve(context.state.itemsList)
           })
-          .catch( () => {
+          .catch( (error) => {
             context.commit('setItemsList', [])
             context.commit('setPagesCount', 0)
-            reject(context.state.itemsList)
+            reject(error)
           })
       })     
     },
@@ -130,8 +130,7 @@ export default {
             resolve()
           })
           .catch( error => {
-            console.log(error)
-            reject()
+            reject(error)
           })
       })
     },

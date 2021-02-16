@@ -1,27 +1,34 @@
 <template>
   <li class="cart__item product">
-    <div class="product__pic">
-      <img
-        :src="getImageUrl(item)"
-        width="120"
-        height="120"
-        alt="Название товара"
-      >
-    </div>
-    <h3 class="product__title">
-      {{ item.product.title }}
-    </h3>
-    <p class="product__info product__info--color">
-      Цвет: 
-      <span>
-        <i :style="'background-color: ' + item.color.color.code +';'"></i>
-        {{ item.color.color.title }} 
+    <router-link 
+      href="#"
+      :to="{name: 'itemPage', params: {id: item.product.id, color: item.color.color.id}}"
+    >
+      <div class="product__pic">
+        <img
+          :src="getImageUrl(item)"
+          width="120"
+          height="120"
+          alt="Название товара"
+        >
+      </div>
+      <h3 class="product__title">
+        {{ item.product.title }}
+      </h3>
+    </router-link>
+
+      <p class="product__info product__info--color">
+        Цвет: 
+        <span>
+          <i :style="'background-color: ' + item.color.color.code +';'"></i>
+          {{ item.color.color.title }} 
+        </span>
+      </p>
+      <span class="product__code">
+        <p>Размер: {{ item.size.title }}</p>
+        <p>Артикул: {{ item.product.id }}</p>
       </span>
-    </p>
-    <span class="product__code">
-      <p>Размер: {{ item.size.title }}</p>
-      <p>Артикул: {{ item.product.id }}</p>
-    </span>
+    
 
     <base-quantity-input 
       :max-quantity="avaliableQuantity"

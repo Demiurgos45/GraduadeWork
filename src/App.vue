@@ -45,16 +45,13 @@ export default {
     
     this.$store.dispatch('showLoader')
     this.$store.dispatch('getMaterials')
-      .then( response => {
-        if (!response) {
-          console.log('Can\'t receive materials')
-        }
-      })
-      .catch( () => {
-
-      })
       .then( () => {
         this.$store.dispatch('hideLoader')
+      })
+      .catch( (error) => {
+        this.$store.commit('setErrorMessage', error)
+        this.$store.dispatch('hideLoader')
+        this.$router.push({name: 'errorPage'})
       })
 
     this.$store.dispatch('showLoader')

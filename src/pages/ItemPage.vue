@@ -1,12 +1,6 @@
 <template>
-  <main
-    v-if="isLoadingError"
-    class="content container"
-  >
-    <h3>Товар не найден</h3>
-  </main>
-
-  <main v-else
+  <main 
+    v-if="!isInfoLoading"
     class="content container"
   >
     <div class="content__top">
@@ -175,11 +169,11 @@ export default {
   data() {
     return {
       routerColor: +this.$route.params.color,
-      isLoadingError: true,
       itemQuantity: 1,
       itemSize: 0,
       itemAddSending: false,
-      itemAdded: false
+      itemAdded: false,
+      isInfoLoading: false
     }
   },
 
@@ -192,10 +186,10 @@ export default {
     },
     selectedColorId: {
       get() {
-        if ((this.routerColor === '0') && (this.itemInfo)) {
+        if ((+this.routerColor === 0) && (this.itemInfo)) {
           return this.itemInfo.colors[0].color.id
         }
-        return this.routerColor
+        return +this.routerColor
       },
       set(val) {
         this.routerColor = val
@@ -212,32 +206,36 @@ export default {
         this.itemSize = val
       }
     },
-    imageLink() {
+    imageLink() {      
       const gallery = this.itemInfo.colors.find(clr => clr.color.id === this.selectedColorId).gallery
       
       if (gallery) {
         return gallery[0].file.url
       }
-      
+
       return ''
     }
   },
 
   methods: {
     getItemInfo() {
-      this.isLoadingError = true
-      this.$store.dispatch('showLoader')
+      if (!this.isInfoLoading) {
+        this.isInfoLoading = true
+        this.$store.dispatch('showLoader')
+        this.$store.commit('delErrorMessage')
 
-      this.$store.dispatch('getItemInfo', this.$route.params.id)
-        .then( () => {
-          this.isLoadingError = false
-        })
-        .catch( () => {
-          
-        })
-        .then( () => {
-          this.$store.dispatch('hideLoader')
-        })
+        this.$store.dispatch('getItemInfo', this.$route.params.id)
+          .then( () => {
+            this.$store.dispatch('hideLoader')
+            this.isInfoLoading = false
+          })
+          .catch( (error) => {
+            this.$store.commit('setErrorMessage', error)
+            this.isInfoLoading = false
+            this.$store.dispatch('hideLoader')
+            this.$router.push({name: 'errorPage'})
+          })
+      }
     },
 
     addToBasket() {

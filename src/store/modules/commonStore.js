@@ -47,17 +47,15 @@ export default {
 
   actions: {
     getMaterials(context) {
-      return new Promise ( (resolve) => {
+      return new Promise ( (resolve, reject) => {
         axios
           .get(API_BASE_URL + '/materials')
           .then( response => {
             context.commit('setMaterials', response.data.items)
+            resolve()
           })
-          .catch( () => {
-            // There's nothing to do here yet
-          })
-          .then( () => {
-            resolve(context.state.materials)
+          .catch( (error) => {
+            reject(error)
           })
       })
     },
@@ -104,7 +102,7 @@ export default {
             context.commit('setItemInfo', response.data)
             resolve(response.data)
           })
-          .catch( error => {
+          .catch( (error) => {
             context.commit('setItemInfo', {})
             reject(error)
           })

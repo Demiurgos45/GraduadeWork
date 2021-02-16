@@ -1,15 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import cartStore from '@/store/modules/cartStore'
+import basketStore from '@/store/modules/basketStore'
 import loaderStore from '@/store/modules/loaderStore'
 import commonStore from '@/store/modules/commonStore'
+import errorPageStore from '@/store/modules/errorPageStore'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    cartStore,
+    basketStore,
     loaderStore,
-    commonStore
+    commonStore,
+    errorPageStore
   }
 })
