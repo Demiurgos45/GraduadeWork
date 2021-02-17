@@ -1,9 +1,10 @@
 <template>
   <div>
     <the-loader :show-loading="showLoading"/>
-    <the-header v-cloak/>
-    <router-view v-cloak/>
-    <the-footer/>
+    <the-modal-dialog :show-dialog="showDialog"/>
+    <the-header />
+    <router-view />
+    <the-footer />
   </div>
 </template>
 
@@ -11,14 +12,18 @@
 import TheFooter from '@/components/TheFooter'
 import TheHeader from '@/components/TheHeader'
 import TheLoader from '@/components/TheLoader'
+import TheModalDialog from '@/components/TheModalDialog.vue'
 
 export default {
-  components: { TheHeader, TheFooter, TheLoader },
+  components: { TheHeader, TheFooter, TheLoader, TheModalDialog },
   name: 'App',
 
   computed: {
     showLoading() {
       return (this.$store.getters.getLoaderStatus > 0)
+    },
+    showDialog() {
+      return this.$store.getters.getShowDialog
     }
   },
 

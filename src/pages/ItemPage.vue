@@ -252,12 +252,26 @@ export default {
           .then( () => {
             this.$store.dispatch('loadBasket')
             this.itemAdded = true
+            this.itemAddSending = false
           })
           .catch( (error) => {
-            console.log(error)
+            this.itemAddSending = false
+            if ((error.response) &&
+                (error.response.status === 400) &&
+                (JSON.stringify(error.response)).indexOf('sizeId')) {
+              this.$store.dispatch('showDialog', {
+                title: 'Приносим извинения',
+                messageHtml: 'Выбранного размера нет в наличии'
+              })
+            }
+            else {
+              this.$store.commit('setErrorMessage', error)
+              this.$store.dispatch('hideLoader')
+              this.$router.push({name: 'errorPage'})
+            }
           })
           .then( () => {
-            this.itemAddSending = false
+
           })
       }
     }

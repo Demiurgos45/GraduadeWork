@@ -4,6 +4,7 @@ import basketStore from '@/store/modules/basketStore'
 import loaderStore from '@/store/modules/loaderStore'
 import commonStore from '@/store/modules/commonStore'
 import errorPageStore from '@/store/modules/errorPageStore'
+import modalDialogStore from '@/store/modules/modalDialogStore'
 
 Vue.use(Vuex)
 
@@ -12,6 +13,7 @@ export default new Vuex.Store({
     basketStore,
     loaderStore,
     commonStore,
-    errorPageStore
+    errorPageStore,
+    modalDialogStore
   }
 })
