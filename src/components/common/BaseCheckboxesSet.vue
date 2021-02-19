@@ -41,7 +41,6 @@ export default {
       type: Array,
       required: true
     },
-    
   },
 
   computed: {

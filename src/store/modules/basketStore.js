@@ -31,6 +31,9 @@ export default {
     },
     getBasketPrice(state) {
       return state.userBasket ? state.userBasket.items.reduce( (sum, item) => sum + item.quantity * item.price, 0): 0
+    },
+    getBasketId(state) {
+      return state.userBasket.id
     }
   },
 

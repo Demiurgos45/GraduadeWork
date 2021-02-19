@@ -3,10 +3,13 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
+          <router-link
+            class="breadcrumbs__link"
+            href="#"
+            :to="{name: 'listPage', params: {id: 0}}"
+          >
             Каталог
-          </a>
-        </li>
+          </router-link>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
             Корзина
@@ -25,15 +28,23 @@
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form
+        class="cart__form form"
+        action="#"
+        method="POST"
+        @submit.prevent="goToOrderPage()"
+      >
         <div class="cart__field">
-          <ul class="cart__list">
-            <basket-page-list-item
-              v-for="item in basketItems"
-              :key="item.id"
-              :item="item"
-            />
-          </ul>
+          
+            <ul class="cart__list">
+              <transition-group name="list" tag="p">
+                <basket-page-list-item
+                  v-for="item in basketItems"
+                  :key="item.id"
+                  :item="item"
+                />
+              </transition-group>
+            </ul>
         </div>
 
         <div class="cart__block">
@@ -83,11 +94,21 @@ export default {
     choiceNounForGoods(value) {
       const nouns = ['товар', 'товара', 'товаров']
       return value + ' ' + choiceOfNoun(value, nouns)
+    },
+    goToOrderPage() {
+      this.$router.push({name: 'orderPage'})
     }
   }
+  
 }
 </script>
 
 <style>
-
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to {
+  opacity: 0;
+  transform: translateX(200px);
+}
 </style>

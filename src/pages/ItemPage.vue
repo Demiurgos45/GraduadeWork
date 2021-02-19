@@ -107,11 +107,19 @@
               </fieldset>
             </div>
             
-            <button class="item__button button button--primery" type="submit">
-              В корзину
+            
+            <button
+              class="item__button button button--primery"
+              type="submit"
+              :disabled="itemAddSending"
+            >
+              <transition name="fade" mode="out-in">
+                <span :key="buttonAddTitle">
+                  {{ buttonAddTitle }}
+                </span>
+              </transition>
             </button>
-            <div v-show="itemAddSending">Добавление товара</div>
-            <div v-show="itemAdded">Товар добавлен</div>
+            
           </form>
         </div>
       </div>
@@ -214,6 +222,18 @@ export default {
       }
 
       return ''
+    },
+    buttonAddTitle() {
+      let title = 'В корзину'
+
+      if (this.itemAddSending) {
+        title = "Добавление"
+      }
+      else if (this.itemAdded) {
+        title = "Товар добавлен"
+      }
+
+      return title
     }
   },
 
@@ -253,6 +273,11 @@ export default {
             this.$store.dispatch('loadBasket')
             this.itemAdded = true
             this.itemAddSending = false
+            setTimeout( () => {
+                this.itemAdded = false
+                //this.$refs.forFocus.blur()
+              },
+              2000)
           })
           .catch( (error) => {
             this.itemAddSending = false
@@ -270,9 +295,6 @@ export default {
               this.$router.push({name: 'errorPage'})
             }
           })
-          .then( () => {
-
-          })
       }
     }
   },
@@ -289,5 +311,13 @@ export default {
 </script>
 
 <style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .7s;
+}
 
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

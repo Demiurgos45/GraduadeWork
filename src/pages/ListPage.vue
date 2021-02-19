@@ -129,7 +129,7 @@ export default {
         .catch( (error) => {
           this.$store.commit('setErrorMessage', error)
           this.$store.dispatch('hideLoader')
-          this.$router.push({name: 'errorPage', params: {id: 0}})
+          this.$router.push({name: 'errorPage'})
         })
     }
   },

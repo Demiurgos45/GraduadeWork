@@ -5,6 +5,7 @@ import loaderStore from '@/store/modules/loaderStore'
 import commonStore from '@/store/modules/commonStore'
 import errorPageStore from '@/store/modules/errorPageStore'
 import modalDialogStore from '@/store/modules/modalDialogStore'
+import orderStore from '@/store/modules/orderStore'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
     loaderStore,
     commonStore,
     errorPageStore,
-    modalDialogStore
+    modalDialogStore,
+    orderStore
   }
 })

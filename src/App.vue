@@ -1,7 +1,7 @@
 <template>
   <div>
-    <the-loader :show-loading="showLoading"/>
-    <the-modal-dialog :show-dialog="showDialog"/>
+    <the-loader :show-loading="showLoading" />
+    <the-modal-dialog :show-dialog="showDialog" />
     <the-header />
     <router-view />
     <the-footer />
@@ -89,3 +89,7 @@ export default {
   }
 }
 </script>
+
+<style>
+
+</style>

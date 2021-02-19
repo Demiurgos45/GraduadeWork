@@ -1,7 +1,9 @@
 <template>
-  <div id="loader" v-show="showLoading">
-    <img src="loading.gif" style="margin: auto;">
-  </div>
+  <transition name="fade" mode="in-out">
+    <div id="loader" v-show="showLoading">
+      <img src="loading.gif" style="margin: auto;">
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -24,8 +26,17 @@ export default {
   left: 0;
   top: 0;
   position: fixed;
-  opacity: 0.2;
   z-index: 100;
   display: flex;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .7s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

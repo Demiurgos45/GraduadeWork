@@ -1,33 +1,45 @@
 <template>
   <li class="cart__item product">
-    <router-link 
+    <router-link
+      class="product__pic"
       href="#"
       :to="{name: 'itemPage', params: {id: item.product.id, color: item.color.color.id}}"
     >
-      <div class="product__pic">
+      <div>
         <img
           :src="getImageUrl(item)"
           width="120"
           height="120"
-          alt="Название товара"
+          :alt="item.product.title"
         >
       </div>
-      <h3 class="product__title">
+    </router-link>
+
+    <router-link
+      href="#"
+      :to="{name: 'itemPage', params: {id: item.product.id, color: item.color.color.id}}"
+    >
+      <h3 class="product__title colorcorrect">
         {{ item.product.title }}
       </h3>
     </router-link>
-
+    
+    
       <p class="product__info product__info--color">
         Цвет: 
         <span>
           <i :style="'background-color: ' + item.color.color.code +';'"></i>
           {{ item.color.color.title }} 
         </span>
+        <span>
+          Размер: {{ item.size.title }}
+        </span>
       </p>
-      <span class="product__code">
-        <p>Размер: {{ item.size.title }}</p>
-        <p>Артикул: {{ item.product.id }}</p>
-      </span>
+    
+
+    <span class="product__code">
+      <p>Артикул: {{ item.product.id }}</p>
+    </span>
     
 
     <base-quantity-input 
@@ -110,5 +122,7 @@ export default {
 </script>
 
 <style>
-
+.colorcorrect {
+  color: rgb(34, 34, 34);
+}
 </style>

@@ -3,14 +3,23 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
+          <router-link
+            class="breadcrumbs__link"
+            href="#"
+            :to="{name: 'listPage', params: {id: 0}}"
+          >
             Каталог
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="cart.html">
+          <router-link
+            class="breadcrumbs__link"
+            href="#"
+            aria-label="Корзина с товарами"
+            :to="{name: 'basketPage'}"
+          >
             Корзина
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
@@ -59,68 +68,30 @@
 
           <div class="cart__options">
             <h3 class="cart__title">Доставка</h3>
-            <ul class="cart__options options">
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="delivery" value="0" checked="">
-                  <span class="options__value">
-                    Самовывоз <b>бесплатно</b>
-                  </span>
-                </label>
-              </li>
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="delivery" value="500">
-                  <span class="options__value">
-                    Курьером <b>290 ₽</b>
-                  </span>
-                </label>
-              </li>
-            </ul>
+            <order-page-value-selector
+              :items-list="deliveriesList"
+              :selected-item.sync="selectedDeliveryType"
+            />
 
             <h3 class="cart__title">Оплата</h3>
-            <ul class="cart__options options">
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="pay" value="card" checked="">
-                  <span class="options__value">
-                    Картой при получении
-                  </span>
-                </label>
-              </li>
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="pay" value="cash">
-                  <span class="options__value">
-                    Наличными при получении
-                  </span>
-                </label>
-              </li>
-            </ul>
+            <order-page-value-selector
+              :items-list="paymentsList"
+              :selected-item.sync="selectedPaymentType"
+            />
           </div>
         </div>
 
         <div class="cart__block">
           <ul class="cart__orders">
-            <li class="cart__order">
-              <h3>Смартфон Xiaomi Redmi Note 7 Pro 6/128GB</h3>
-              <b>990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Гироскутер Razor Hovertrax 2.0ii</h3>
-              <b>1 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Электрический дрифт-карт Razor Lil’ Crazy</h3>
-              <b>4 090 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
+            <order-page-list-item
+              v-for="item in itemsList"
+              :key="item.id"
+              :item="item"
+            />
           </ul>
           
           <div class="cart__total">
-            <p>Доставка: <b>бесплатно</b></p>
+            <p>Доставка: <b> {{ deliveryTypeName }} </b></p>
             <p>Итого: <b>3</b> товара на сумму <b>4 070 ₽</b></p>
           </div>
 
@@ -140,8 +111,77 @@
 </template>
 
 <script>
+import OrderPageListItem from '@/components/orderPage/orderPageListItem'
+import OrderPageValueSelector from '@/components/orderPage/orderPageValueSelector.vue'
 export default {
+  components: { OrderPageListItem, OrderPageValueSelector },
 
+  data() {
+    return {
+      selectedDeliveryType: 0,
+      selectedPaymentType: 0
+    }
+  },
+
+  computed: {
+    itemsList() {
+      return this.$store.getters.getBasketItems
+    },
+    deliveriesList() {
+      return this.$store.getters.getDeliveries
+    },
+    paymentsList() {
+      return this.$store.getters.getPayments
+    },
+    deliveryTypeName() {
+      if (!this.deliveriesList || this.selectedDeliveryType == 0) {
+        return 'Не выбрано'
+      }
+      return this.deliveriesList.find( item => item.id === this.selectedDeliveryType).title
+    }
+  },
+
+  methods: {
+    loadDeliveryTypes() {
+      this.$store.dispatch('showLoader')
+      this.$store.dispatch("loadDeliveries")
+        .then( () => {
+          this.selectedDeliveryType = this.deliveriesList[0].id
+          this.$store.dispatch('hideLoader')
+        })
+        .catch( (error) => {
+          this.$store.commit('setErrorMessage', error)
+          this.$store.dispatch('hideLoader')
+          this.$router.push({name: 'errorPage'})
+        })
+    },
+
+    loadPaymentTypes() {
+      this.$store.dispatch('showLoader')
+      this.$store.dispatch("loadPayments", this.selectedDeliveryType)
+        .then( () => {
+          this.selectedPaymentType = this.paymentsList[0].id
+          this.$store.dispatch('hideLoader')
+        })
+        .catch( (error) => {
+          this.$store.commit('setErrorMessage', error)
+          this.$store.dispatch('hideLoader')
+          this.$router.push({name: 'errorPage'})
+        })
+    }
+  },
+
+  mounted() {
+    this.loadDeliveryTypes();
+  },
+
+  watch: {
+    selectedDeliveryType: {
+      handler() {
+        this.loadPaymentTypes()
+      }
+    }
+  }
 }
 </script>
 

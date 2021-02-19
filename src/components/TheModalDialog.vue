@@ -9,7 +9,7 @@
             class="filter__reset button button--second"
             @click.prevent="hideDialog()"
             value="Ok"
-            style="margin: 5px;"
+            style="margin: 5px; width: 90px; height: 40px; padding: 0; border 0;"
           />
         </div>
     </div>
