@@ -22,7 +22,7 @@
           Корзина
         </h1>
         <span class="content__info">
-          {{ itemsCount }}
+          {{ productsCount | itemsCountFormat(true) }}
         </span>
       </div>
     </div>
@@ -67,13 +67,14 @@
 <script>
 import basketPageListItem from '@/components/basketPage/basketPageListItem.vue'
 import numberFormat from '@/helpers/numberFormat'
-import choiceOfNoun from '@/helpers/choiceOfNoun'
+import itemsCountFormat from '@/helpers/itemsCountFormat'
 
 export default {
   components: { basketPageListItem },
 
   filters: {
-    numberFormat
+    numberFormat,
+    itemsCountFormat
   },
 
   computed: {
@@ -85,16 +86,12 @@ export default {
       return this.$store.getters.getBasketPrice
     },
 
-    itemsCount() {
-      return this.choiceNounForGoods(this.$store.getters.getBasketItemsCount)
+    productsCount() {
+      return this.$store.getters.getBasketProductsCount
     }
   },
 
   methods: {
-    choiceNounForGoods(value) {
-      const nouns = ['товар', 'товара', 'товаров']
-      return value + ' ' + choiceOfNoun(value, nouns)
-    },
     goToOrderPage() {
       this.$router.push({name: 'orderPage'})
     }

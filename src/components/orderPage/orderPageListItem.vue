@@ -2,7 +2,7 @@
   <li class="cart__order">
     <h3> {{ item.product.title }} </h3>
     <b> {{ item.price * item.quantity | numberFormat }} </b>
-    <span>Артикул: {{ item.product.id }}</span>
+    <span>{{ itemDetail }} </span>
   </li>
 </template>
 
@@ -19,6 +19,17 @@ export default {
 
   filters: {
     numberFormat
+  },
+
+  computed: {
+    itemDetail() {
+      return 'Артикул: ' +
+        this.item.product.id +
+        '   Цвет: ' +
+        this.item.color.color.title +
+        '   Размер: '+
+        this.item.size.title
+    }
   }
 }
 </script>

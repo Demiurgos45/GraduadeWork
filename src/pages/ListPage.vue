@@ -6,7 +6,7 @@
           Каталог
         </h1>
         <span class="content__info">
-          {{ itemsCount }}
+          {{ itemsCount | itemsCountFormat(true) }}
         </span>        
       </div>
     </div>
@@ -59,9 +59,9 @@
 import ListPageFilter from '@/components/listPage/ListPageFilter'
 import ListPageItem from '@/components/listPage/ListPageItem'
 import ListPagePagination from '@/components/listPage/ListPagePagination'
-import choiceOfNoun from '@/helpers/choiceOfNoun'
 import { itemsPerPageList } from '@/config'
 import BaseSelect from '@/components/common/BaseSelect'
+import itemsCountFormat from '@/helpers/itemsCountFormat'
 
 export default {
   components: { ListPageFilter, ListPageItem, ListPagePagination, BaseSelect },
@@ -82,6 +82,10 @@ export default {
     }
   },
 
+  filters: {
+    itemsCountFormat
+  },
+
   computed: {
     itemsList() {
       const list = this.$store.getters.getItemsList
@@ -91,7 +95,7 @@ export default {
       return this.$store.getters.getPagesCount
     },
     itemsCount() {
-      return this.choiceNounForGoods(this.$store.getters.getItemsCount)
+      return this.$store.getters.getItemsCount
     },
     categoriesList() {
       const categories = this.$store.getters.getCategories
@@ -108,10 +112,6 @@ export default {
   },
 
   methods: {
-    choiceNounForGoods(value) {
-      const nouns = ['товар', 'товара', 'товаров']
-      return value + ' ' + choiceOfNoun(value, nouns)
-    },
     loadItems() {
       this.$store.dispatch('showLoader')
       this.$store.commit('delErrorMessage')

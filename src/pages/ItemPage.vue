@@ -82,7 +82,7 @@
               />
 
               <b class="item__price">
-                {{ itemInfo.price * itemQuantity| numberFormat }} ₽
+                {{ itemInfo.price * itemQuantity | numberFormat }} ₽
               </b>
             </div>
 

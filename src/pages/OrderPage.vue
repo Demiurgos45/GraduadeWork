@@ -36,47 +36,63 @@
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form
+        class="cart__form form"
+        action="#"
+        method="POST"
+        @submit.prevent="sendOrder()"
+      >
         <div class="cart__field">
           <div class="cart__data">
-            <label class="form__label">
-              <input class="form__input" type="text" name="name" placeholder="Введите ваше полное имя">
-              <span class="form__value">ФИО</span>
-            </label>
+            <base-input-text
+              v-model="formData.name"
+              title="ФИО"
+              placeholder="Введите ваше полное имя"
+              :error="formError.name"
+            />
 
-            <label class="form__label">
-              <input class="form__input" type="text" name="address" placeholder="Введите ваш адрес">
-              <span class="form__value">Адрес доставки</span>
-            </label>
+            <base-input-text
+              v-model="formData.address"
+              title="Адрес доставки"
+              placeholder="Введите ваш адрес"
+              :error="formError.address"
+            />
 
-            <label class="form__label">
-              <input class="form__input" type="tel" name="phone" placeholder="Введите ваш телефон">
-              <span class="form__value">Телефон</span>
-              <span class="form__error">Неверный формат телефона</span>
-            </label>
+            <base-input-text
+              v-model="formData.phone"
+              title="Телефон"
+              type="tel"
+              placeholder="Введите ваш телефон"
+              :error="formError.phone"
+            />
 
-            <label class="form__label">
-              <input class="form__input" type="email" name="email" placeholder="Введи ваш Email">
-              <span class="form__value">Email</span>
-            </label>
+            <base-input-text
+              v-model="formData.email"
+              title="E-mail"
+              type="email"
+              placeholder="Введите ваш e-mail"
+              :error="formError.email"
+            />
 
-            <label class="form__label">
-              <textarea class="form__input form__input--area" name="comments" placeholder="Ваши пожелания"></textarea>
-              <span class="form__value">Комментарий к заказу</span>
-            </label>
+            <base-input-textarea
+              v-model="formData.comment"
+              title="Коментарий к заказу"
+              placeholder="Ваши пожелания"
+              :error="formError.comment"
+            />
           </div>
 
           <div class="cart__options">
             <h3 class="cart__title">Доставка</h3>
             <order-page-value-selector
               :items-list="deliveriesList"
-              :selected-item.sync="selectedDeliveryType"
+              :selected-item.sync="deliveryTypeId"
             />
 
             <h3 class="cart__title">Оплата</h3>
             <order-page-value-selector
               :items-list="paymentsList"
-              :selected-item.sync="selectedPaymentType"
+              :selected-item.sync="paymentTypeId"
             />
           </div>
         </div>
@@ -91,18 +107,18 @@
           </ul>
           
           <div class="cart__total">
-            <p>Доставка: <b> {{ deliveryTypeName }} </b></p>
-            <p>Итого: <b>3</b> товара на сумму <b>4 070 ₽</b></p>
+            <p>Доставка: <b> {{ deliveryPrice }} </b></p>
+            <p>Итого: <b> {{ productsCount | itemsCountFormat(true) }} </b> на сумму <b> {{ basketPrice | numberFormat}} ₽</b></p>
           </div>
 
           <button class="cart__button button button--primery" type="submit">
             Оформить заказ
           </button>
         </div>
-        <div class="cart__error form__error-block">
+        <div class="cart__error form__error-block" v-if="errorMessage">
           <h4>Заявка не отправлена!</h4>
           <p>
-            Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
+            {{ errorMessage }}
           </p>
         </div>
       </form>
@@ -112,32 +128,72 @@
 
 <script>
 import OrderPageListItem from '@/components/orderPage/orderPageListItem'
-import OrderPageValueSelector from '@/components/orderPage/orderPageValueSelector.vue'
+import OrderPageValueSelector from '@/components/orderPage/orderPageValueSelector'
+import BaseInputText from '@/components/common/BaseInputText'
+import BaseInputTextarea from '@/components/common/BaseInputTextarea'
+import numberFormat from '@/helpers/numberFormat'
+import itemsCountFormat from '@/helpers/itemsCountFormat'
+
+
 export default {
-  components: { OrderPageListItem, OrderPageValueSelector },
+  components: { OrderPageListItem, OrderPageValueSelector, BaseInputText, BaseInputTextarea },
 
   data() {
     return {
-      selectedDeliveryType: 0,
-      selectedPaymentType: 0
+      deliveryTypeId: 0,
+      paymentTypeId: 0,
+      formData: {
+        name: 'Иванов Пётр Михайлович',
+        address: 'Ленина 10',
+        phone: '+79876543210',
+        email: 'vanya@rr.ru',
+        comment: 'Звонок не работает. Стучать.'
+      },
+      formError: {},
+      errorMessage: ''
     }
+  },
+
+  filters: {
+    numberFormat,
+    itemsCountFormat
   },
 
   computed: {
     itemsList() {
       return this.$store.getters.getBasketItems
     },
+
     deliveriesList() {
       return this.$store.getters.getDeliveries
     },
+
     paymentsList() {
       return this.$store.getters.getPayments
     },
-    deliveryTypeName() {
-      if (!this.deliveriesList || this.selectedDeliveryType == 0) {
+
+    deliveryPrice() {
+      if (!this.deliveriesList || this.deliveryTypeId == 0) {
         return 'Не выбрано'
       }
-      return this.deliveriesList.find( item => item.id === this.selectedDeliveryType).title
+      let price = this.deliveriesList.find( item => item.id === this.deliveryTypeId).price
+
+      if (price === '0') {
+        price = 'Бесплатно'
+      }
+      else {
+        price = numberFormat(+price) + ' ₽'
+      }
+
+      return price
+    },
+
+    productsCount() {
+      return this.$store.getters.getBasketProductsCount
+    },
+
+    basketPrice() {
+      return this.$store.getters.getBasketPrice
     }
   },
 
@@ -146,7 +202,7 @@ export default {
       this.$store.dispatch('showLoader')
       this.$store.dispatch("loadDeliveries")
         .then( () => {
-          this.selectedDeliveryType = this.deliveriesList[0].id
+          this.deliveryTypeId = this.deliveriesList[0].id
           this.$store.dispatch('hideLoader')
         })
         .catch( (error) => {
@@ -158,15 +214,34 @@ export default {
 
     loadPaymentTypes() {
       this.$store.dispatch('showLoader')
-      this.$store.dispatch("loadPayments", this.selectedDeliveryType)
+      this.$store.dispatch("loadPayments", this.deliveryTypeId)
         .then( () => {
-          this.selectedPaymentType = this.paymentsList[0].id
+          this.paymentTypeId = this.paymentsList[0].id
           this.$store.dispatch('hideLoader')
         })
         .catch( (error) => {
           this.$store.commit('setErrorMessage', error)
           this.$store.dispatch('hideLoader')
           this.$router.push({name: 'errorPage'})
+        })
+    },
+
+    sendOrder() {
+      const userAccessKey = this.$store.getters.getUserAccessKey
+      const data = {
+        ...this.formData,
+        deliveryTypeId: this.deliveryTypeId,
+        paymentTypeId: this.paymentTypeId
+      }
+
+      this.$store.dispatch('sendOrder', {userAccessKey, data})
+        .then( (response) => {
+          this.$store.dispatch('clearBasket')
+          this.$router.push({name: 'orderInfoPage', params: {id: response.data.id}})
+        })
+        .catch( (error) => {
+          this.formError = error.response.data.error.request || {}
+          this.errorMessage = error.response.data.error.message
         })
     }
   },
@@ -176,7 +251,7 @@ export default {
   },
 
   watch: {
-    selectedDeliveryType: {
+    deliveryTypeId: {
       handler() {
         this.loadPaymentTypes()
       }

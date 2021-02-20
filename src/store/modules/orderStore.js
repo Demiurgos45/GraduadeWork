@@ -4,7 +4,8 @@ import axios from 'axios'
 export default {
   state: {
     deliveries: null,
-    payments: null
+    payments: null,
+    orderInfo: null
   },
 
   getters: {
@@ -14,7 +15,15 @@ export default {
 
     getPayments(state) {
       return state.payments || []
-    }
+    },
+
+    getOrderInfo(state) {
+      return state.orderInfo
+    },
+
+    getOrderTotalPrice(state) {
+      return state.orderInfo.basket.items.reduce((total, item) => (item.price * item.quantity) + total, 0) || 0
+    },
   },
 
   mutations: {
@@ -23,6 +32,9 @@ export default {
     },
     setPayments(state, payments) {
       state.payments = payments
+    },
+    setOrderInfo(state, info) {
+      state.orderInfo = info
     }
   },
 
@@ -31,7 +43,7 @@ export default {
       return new Promise ( (resolve, reject) => {
         axios
           .get(API_BASE_URL + '/deliveries')
-          .then( response => {
+          .then( (response) => {
             context.commit('setDeliveries', response.data)
             resolve()
           })
@@ -49,8 +61,48 @@ export default {
               deliveryTypeId
             }
           })
-          .then( response => {
+          .then( (response) => {
             context.commit('setPayments', response.data)
+            resolve()
+          })
+          .catch( (error) => {
+            reject(error)
+          })
+      })
+    },
+
+    sendOrder(context, data) {
+      return new Promise ( (resolve, reject) => {
+        axios
+          .post(API_BASE_URL + '/orders',
+            {
+              ...data.data
+            },
+            {
+              params: {
+                userAccessKey: data.userAccessKey
+              }
+            })
+          .then( (response) => {
+            context.commit('setOrderInfo',response.data)
+            resolve(response)
+          })
+          .catch( (error) => {
+            reject(error)
+          })
+      })
+    },
+
+    getOrderInfo(context, data) {
+      return new Promise ( (resolve, reject) => {
+        axios
+          .get(API_BASE_URL + '/orders/' + data.id, {
+            params: {
+              userAccessKey: data.userAccessKey
+            }
+          })
+          .then( (response) => {
+            context.commit('setOrderInfo',response.data)
             resolve()
           })
           .catch( (error) => {

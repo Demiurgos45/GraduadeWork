@@ -34,6 +34,9 @@ export default {
     },
     getBasketId(state) {
       return state.userBasket.id
+    },
+    getUserAccessKey(state) {
+      return state.userAccessKey
     }
   },
 
@@ -173,6 +176,10 @@ export default {
         .catch( (error) => {
           console.log(error)
         })
+    },
+
+    clearBasket(context) {
+      context.commit('setUserBasket', null)
     }
     
   }

@@ -3,14 +3,23 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
+          <router-link
+            class="breadcrumbs__link"
+            href="#"
+            :to="{name: 'listPage', params: {id: 0}}"
+          >
             Каталог
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="cart.html">
+          <router-link
+            class="breadcrumbs__link"
+            href="#"
+            aria-label="Корзина с товарами"
+            :to="{name: 'basketPage'}"
+          >
             Корзина
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
@@ -20,7 +29,7 @@
       </ul>
 
       <h1 class="content__title">
-        Заказ оформлен <span>№ 23621</span>
+        Заказ оформлен <span>№ {{ orderInfo.id }} </span>
       </h1>
     </div>
 
@@ -38,7 +47,7 @@
                 Получатель
               </span>
               <span class="dictionary__value">
-                Иванова Василиса Алексеевна
+                {{ orderInfo.name }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -46,7 +55,7 @@
                 Адрес доставки
               </span>
               <span class="dictionary__value">
-                Москва, ул. Ленина, 21, кв. 33
+                {{ orderInfo.address }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -54,7 +63,7 @@
                 Телефон
               </span>
               <span class="dictionary__value">
-                8 800 989 74 84
+                {{ orderInfo.phone }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -62,7 +71,7 @@
                 Email
               </span>
               <span class="dictionary__value">
-                lalala@mail.ru
+                {{ orderInfo.email }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -70,7 +79,7 @@
                 Способ оплаты
               </span>
               <span class="dictionary__value">
-                картой при получении
+                {{ orderInfo.paymentType }}
               </span>
             </li>
           </ul>
@@ -78,26 +87,16 @@
 
         <div class="cart__block">
           <ul class="cart__orders">
-            <li class="cart__order">
-              <h3>Смартфон Xiaomi Redmi Note 7 Pro 6/128GB</h3>
-              <b>990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Гироскутер Razor Hovertrax 2.0ii</h3>
-              <b>1 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Электрический дрифт-карт Razor Lil’ Crazy</h3>
-              <b>4 090 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
+            <order-page-list-item
+              v-for="item in orderInfo.basket.items"
+              :key="item.id"
+              :item="item"
+            />
           </ul>
           
           <div class="cart__total">
-            <p>Доставка: <b>бесплатно</b></p>
-            <p>Итого: <b>3</b> товара на сумму <b>4 070 ₽</b></p>
+            <p>Доставка: <b> {{ orderInfo.deliveryType.title }} {{ deliveryPrice }} </b></p>
+            <p>Итого: {{ orderInfo.basket.items.length | itemsCountFormat(true) }} на сумму <b>{{ orderPrice | numberFormat }} ₽</b></p>
           </div>
         </div>
       </form>
@@ -106,8 +105,69 @@
 </template>
 
 <script>
-export default {
+import itemsCountFormat from '@/helpers/itemsCountFormat'
+import numberFormat from '@/helpers/numberFormat'
+import orderPageListItem from '@/components/orderPage/orderPageListItem'
 
+export default {
+  components: {
+    orderPageListItem
+  },
+
+  filters: {
+    numberFormat,
+    itemsCountFormat
+  },
+
+  data() {
+    return {
+      orderId: this.$route.params.id
+    }
+  },
+
+  computed: {
+    orderInfo() {
+      return this.$store.getters.getOrderInfo
+    },
+
+    orderPrice() {
+      return this.$store.getters.getOrderTotalPrice
+    },
+
+    deliveryPrice() {
+      let price = this.orderInfo.deliveryType.price
+
+      if (price === '0') {
+        price = 'Бесплатно'
+      }
+      else {
+        price = numberFormat(+price) + ' ₽'
+      }
+
+      return price
+    },
+  },
+
+  methods: {
+    loadOrderInfo() {
+      if (this.orderId !== this.orderInfo.id) {
+        this.$store.dispatch('getOrderInfo', this.orderId)
+          .then( (response) => {
+            console.log(response)
+          })
+          .catch( (error) => {
+            console.log(error)
+          })
+      }
+    }
+  },
+
+  watch: {
+    immediate: true,
+    handler() {
+      this.loadOrderInfo()
+    }
+  }
 }
 </script>
 
