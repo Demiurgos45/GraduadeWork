@@ -22,7 +22,10 @@ export default {
     },
 
     getOrderTotalPrice(state) {
-      return state.orderInfo.basket.items.reduce((total, item) => (item.price * item.quantity) + total, 0) || 0
+      if (state.orderInfo) {
+        return state.orderInfo.basket.items.reduce((total, item) => (item.price * item.quantity) + total, 0)
+      }
+      return 0
     },
   },
 
@@ -94,20 +97,26 @@ export default {
     },
 
     getOrderInfo(context, data) {
+      console.log(data)
       return new Promise ( (resolve, reject) => {
-        axios
-          .get(API_BASE_URL + '/orders/' + data.id, {
-            params: {
-              userAccessKey: data.userAccessKey
-            }
-          })
-          .then( (response) => {
-            context.commit('setOrderInfo',response.data)
-            resolve()
-          })
-          .catch( (error) => {
-            reject(error)
-          })
+        if (data.userAccessKey) {
+          axios
+            .get(API_BASE_URL + '/orders/' + data.id, {
+              params: {
+                userAccessKey: data.userAccessKey
+              }
+            })
+            .then( (response) => {
+              context.commit('setOrderInfo',response.data)
+              resolve()
+            })
+            .catch( (error) => {
+              reject(error)
+            })
+        }
+        else {
+          resolve()
+        }
       })
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <main class="content container">
+  <main v-if="isOrderLoaded" class="content container">
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -88,7 +88,7 @@
         <div class="cart__block">
           <ul class="cart__orders">
             <order-page-list-item
-              v-for="item in orderInfo.basket.items"
+              v-for="item in orderBasketItems"
               :key="item.id"
               :item="item"
             />
@@ -101,6 +101,8 @@
         </div>
       </form>
     </section>
+  </main>
+  <main v-else>
   </main>
 </template>
 
@@ -126,6 +128,11 @@ export default {
   },
 
   computed: {
+
+    userAccessKey() {
+      return this.$store.getters.getUserAccessKey
+    },
+
     orderInfo() {
       return this.$store.getters.getOrderInfo
     },
@@ -146,26 +153,53 @@ export default {
 
       return price
     },
+
+    isOrderLoaded() {
+      if (!this.orderInfo || !this.userAccessKey) {
+        return false
+      }
+      return true
+    },
+
+    orderBasketItems() {
+      if (this.orderInfo.basket) {
+        return this.orderInfo.basket.items
+      }
+      return []
+    }
   },
 
   methods: {
     loadOrderInfo() {
-      if (this.orderId !== this.orderInfo.id) {
-        this.$store.dispatch('getOrderInfo', this.orderId)
-          .then( (response) => {
-            console.log(response)
+      if ((!this.orderInfo) || (this.orderId !== this.orderInfo.id)) {
+        this.$store.dispatch('showLoader')
+        this.$store.dispatch('getOrderInfo', {
+          id: this.orderId,
+          userAccessKey: this.userAccessKey
+        })
+          .then( () => {
+            this.$store.dispatch('hideLoader')
           })
           .catch( (error) => {
             console.log(error)
+            this.$store.dispatch('hideLoader')
           })
       }
     }
   },
 
   watch: {
-    immediate: true,
-    handler() {
-      this.loadOrderInfo()
+    '$route.params.id': {
+      immediate: true,
+      handler() {
+        this.loadOrderInfo()
+      }
+    },
+
+    '$store.getters.getUserAccessKey': {
+      handler() {
+        this.loadOrderInfo()
+      }
     }
   }
 }

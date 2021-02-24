@@ -111,7 +111,7 @@
             <button
               class="item__button button button--primery"
               type="submit"
-              :disabled="itemAddSending"
+              ref="btnAdd"
             >
               <transition name="fade" mode="out-in">
                 <span :key="buttonAddTitle">
@@ -275,7 +275,7 @@ export default {
             this.itemAddSending = false
             setTimeout( () => {
                 this.itemAdded = false
-                //this.$refs.forFocus.blur()
+                //this.$refs.btnAdd.blur()
               },
               2000)
           })
@@ -313,7 +313,7 @@ export default {
 <style>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity .7s;
+  transition: opacity .5s;
 }
 
 .fade-enter,
