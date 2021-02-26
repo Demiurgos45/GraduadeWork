@@ -23,15 +23,14 @@
             </router-link>
           </td>
           <td align="right">
-            <a
-              href="#"
+            <button
               title="Добавить в корзину"
               @click.prevent="addToBasket()"
             >
               <svg width="19" height="24">
                 <use xlink:href="#icon-cart"></use>
               </svg>
-            </a>
+            </button>
           </td>
         </tr>
       </table>
