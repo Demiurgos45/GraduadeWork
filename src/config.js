@@ -2,10 +2,6 @@ const API_BASE_URL = 'https://vue-moire.skillbox.cc/api'
 
 const itemsPerPageList = [
   {
-    id: 3,
-    title: '3'
-  },
-  {
     id: 12,
     title: '12'
   },

@@ -95,14 +95,26 @@
           </ul>
           
           <div class="cart__total">
-            <p>Доставка: <b> {{ orderInfo.deliveryType.title }} {{ deliveryPrice }} </b></p>
-            <p>Итого: {{ orderInfo.basket.items.length | itemsCountFormat(true) }} на сумму <b>{{ orderPrice | numberFormat }} ₽</b></p>
+            <p>Доставка: <b> {{ orderInfo.deliveryType.title }} {{ deliveryPrice | deliveryPriceFormat}} </b></p>
+            <p>Итого: {{ orderInfo.basket.items.length | itemsCountFormat(true) }} на сумму <b>{{ orderInfo.totalPrice | numberFormat }} ₽</b></p>
           </div>
         </div>
       </form>
     </section>
   </main>
   <main v-else>
+    <div class="content__top">
+      <h3> {{ errMessage }} </h3>
+      <br>
+      Вы можете перейти в
+      <router-link
+        class="message__link"
+        href="#"
+        :to="{name: 'listPage', params: {id: 0}}"
+      >
+        <b>Каталог</b>
+      </router-link>
+    </div>
   </main>
 </template>
 
@@ -110,6 +122,7 @@
 import itemsCountFormat from '@/helpers/itemsCountFormat'
 import numberFormat from '@/helpers/numberFormat'
 import orderPageListItem from '@/components/orderPage/orderPageListItem'
+import deliveryPriceFormat from '@/helpers/deliveryPriceFormat'
 
 export default {
   components: {
@@ -118,12 +131,14 @@ export default {
 
   filters: {
     numberFormat,
-    itemsCountFormat
+    itemsCountFormat,
+    deliveryPriceFormat
   },
 
   data() {
     return {
-      orderId: this.$route.params.id
+      orderId: this.$route.params.id,
+      errMessage: ''
     }
   },
 
@@ -137,21 +152,8 @@ export default {
       return this.$store.getters.getOrderInfo
     },
 
-    orderPrice() {
-      return this.$store.getters.getOrderTotalPrice
-    },
-
     deliveryPrice() {
-      let price = this.orderInfo.deliveryType.price
-
-      if (price === '0') {
-        price = 'Бесплатно'
-      }
-      else {
-        price = numberFormat(+price) + ' ₽'
-      }
-
-      return price
+      return +this.orderInfo.deliveryType.price
     },
 
     isOrderLoaded() {
@@ -181,8 +183,15 @@ export default {
             this.$store.dispatch('hideLoader')
           })
           .catch( (error) => {
-            console.log(error)
-            this.$store.dispatch('hideLoader')
+            if ((error.response.status) && (error.response.status === 400)) {
+              this.$store.dispatch('hideLoader')
+              this.errMessage = error.response.data.error.message
+            }
+            else {
+              this.$store.commit('setErrorMessage', error)
+              this.$store.dispatch('hideLoader')
+              this.$router.push({name: 'errorPage'})
+            }
           })
       }
     }

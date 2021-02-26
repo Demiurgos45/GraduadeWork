@@ -23,7 +23,7 @@
 
       <section class="catalog">
         
-        <ul class="catalog__list">
+        <ul class="catalog__list_2">
           <list-page-item 
             v-for="item in itemsList"
             :key="item.id"
@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      itemsPerPage: 3,
+      itemsPerPage: itemsPerPageList[0].id,
       perPageList: itemsPerPageList,
       filterState: {
         minPrice: 0,
@@ -177,4 +177,14 @@ export default {
   border: none;
   vertical-align: middle;
 }
+
+.catalog__list_2 {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 210px);
+  grid-gap: 40px 10px;
+  margin: 0 0 70px;
+}
+
 </style>

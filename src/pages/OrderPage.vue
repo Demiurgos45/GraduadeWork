@@ -88,7 +88,6 @@
               :items-list="deliveriesList"
               :selected-item.sync="deliveryTypeId"
             />
-
             <h3 class="cart__title">Оплата</h3>
             <order-page-value-selector
               :items-list="paymentsList"
@@ -107,7 +106,7 @@
           </ul>
           
           <div class="cart__total">
-            <p>Доставка: <b> {{ deliveryPrice }} </b></p>
+            <p>Доставка: <b> {{ deliveryPrice | deliveryPriceFormat }} </b></p>
             <p>Итого: <b> {{ productsCount | itemsCountFormat(true) }} </b> на сумму <b> {{ basketPrice | numberFormat}} ₽</b></p>
           </div>
 
@@ -133,6 +132,7 @@ import BaseInputText from '@/components/common/BaseInputText'
 import BaseInputTextarea from '@/components/common/BaseInputTextarea'
 import numberFormat from '@/helpers/numberFormat'
 import itemsCountFormat from '@/helpers/itemsCountFormat'
+import deliveryPriceFormat from '@/helpers/deliveryPriceFormat'
 
 
 export default {
@@ -156,7 +156,8 @@ export default {
 
   filters: {
     numberFormat,
-    itemsCountFormat
+    itemsCountFormat,
+    deliveryPriceFormat
   },
 
   computed: {
@@ -165,7 +166,8 @@ export default {
     },
 
     deliveriesList() {
-      return this.$store.getters.getDeliveries
+      const dList = this.$store.getters.getDeliveries
+      return dList
     },
 
     paymentsList() {
@@ -173,19 +175,11 @@ export default {
     },
 
     deliveryPrice() {
-      if (!this.deliveriesList || this.deliveryTypeId == 0) {
-        return 'Не выбрано'
+      let price = 0
+      if (this.deliveriesList && this.deliveryTypeId != 0) {
+        price = this.deliveriesList.find( item => item.id === this.deliveryTypeId).price
       }
-      let price = this.deliveriesList.find( item => item.id === this.deliveryTypeId).price
-
-      if (price === '0') {
-        price = 'Бесплатно'
-      }
-      else {
-        price = numberFormat(+price) + ' ₽'
-      }
-
-      return price
+      return +price
     },
 
     productsCount() {
@@ -193,7 +187,7 @@ export default {
     },
 
     basketPrice() {
-      return this.$store.getters.getBasketPrice
+      return (this.$store.getters.getBasketPrice + this.deliveryPrice)
     }
   },
 
@@ -261,5 +255,15 @@ export default {
 </script>
 
 <style>
+.list-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+  transition: opacity .5s;
+}
+.list-enter, .list-leave-to {
+  opacity: 0;
+}
 
 </style>

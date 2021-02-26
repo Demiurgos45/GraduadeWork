@@ -17,7 +17,7 @@
         <span class="options__value">
           {{ item.title }}
           <span v-if="item.price" style="padding-left: 10px;">
-            <b> {{ +item.price | numberFormat }} </b>
+            <b> {{ +item.price | deliveryPriceFormat }} </b>
           </span>
         </span>
       </label>
@@ -27,6 +27,7 @@
 
 <script>
 import numberFormat from '@/helpers/numberFormat'
+import deliveryPriceFormat from '@/helpers/deliveryPriceFormat'
 
 export default {
   props: {
@@ -41,7 +42,8 @@ export default {
   },
 
   filters: {
-    numberFormat
+    numberFormat,
+    deliveryPriceFormat
   },
 
   computed: {
@@ -63,5 +65,11 @@ export default {
 </script>
 
 <style>
-
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
 </style>
