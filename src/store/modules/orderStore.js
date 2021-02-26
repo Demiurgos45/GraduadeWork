@@ -97,7 +97,6 @@ export default {
     },
 
     getOrderInfo(context, data) {
-      console.log(data)
       return new Promise ( (resolve, reject) => {
         if (data.userAccessKey) {
           axios

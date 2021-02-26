@@ -3,6 +3,7 @@ node_modules
 /dist
 /public/img
 jsconfig.json
+deploy.sh
 
 # local env files
 .env.local

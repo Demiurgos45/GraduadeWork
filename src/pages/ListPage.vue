@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      itemsPerPage: itemsPerPageList[0].id,
+      currentItemsPerPage: 0,
       perPageList: itemsPerPageList,
       filterState: {
         minPrice: 0,
@@ -90,6 +90,27 @@ export default {
     itemsList() {
       const list = this.$store.getters.getItemsList
       return list ? list : []
+    },
+    itemsPerPage: {
+      get() {
+        let itemsPerPage = 0
+        if (this.currentItemsPerPage) {
+          itemsPerPage=this.currentItemsPerPage
+        }
+        else {
+          itemsPerPage = localStorage.getItem('itemsPerPage')
+          if (!itemsPerPage) {
+            itemsPerPage = itemsPerPageList[0].id
+            localStorage.setItem('itemsPerPage', itemsPerPage)
+          }
+        }
+        
+        return +itemsPerPage
+      },
+      set(value) {
+        localStorage.setItem('itemsPerPage', value)
+        this.currentItemsPerPage = value
+      }
     },
     pagesCount() {
       return this.$store.getters.getPagesCount
@@ -146,7 +167,7 @@ export default {
       }
     },
 
-    itemsPerPage: {
+    currentItemsPerPage: {
       handler() {
         this.loadItems()
       }
