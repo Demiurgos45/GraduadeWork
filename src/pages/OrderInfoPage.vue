@@ -102,7 +102,10 @@
       </form>
     </section>
   </main>
-  <main v-else>
+  <main
+    v-else
+    class="content container"
+  >
     <div class="content__top">
       <h3> {{ errMessage }} </h3>
       <br>

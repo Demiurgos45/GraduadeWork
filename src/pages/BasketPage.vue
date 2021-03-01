@@ -72,13 +72,13 @@
     <div class="content__top">
       <h3> Ваша корзина пуста </h3>
       <br>
-      Выберите товары в каталоге
+      Выберите товары в
       <router-link
         class="message__link"
         href="#"
         :to="{name: 'listPage', params: {id: 0}}"
       >
-        <b>Каталоге</b>
+        <b> Каталоге</b>
       </router-link>
     </div>
   </main>

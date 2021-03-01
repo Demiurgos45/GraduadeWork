@@ -27,7 +27,11 @@
               title="Добавить в корзину"
               @click.prevent="addToBasket()"
             >
-              <svg width="19" height="24">
+              <svg
+                :class="{'btn_press' : btn_press}"
+                width="19"
+                height="24"
+              >
                 <use xlink:href="#icon-cart"></use>
               </svg>
             </button>
@@ -74,7 +78,8 @@ export default {
       selectedColorId: this.item.colors[0].color.id,
       itemSize: 0,
       sizesList: [],
-      itemAddSending: false
+      itemAddSending: false,
+      btn_press: false
     }
   },
 
@@ -108,6 +113,8 @@ export default {
 
   methods: {
     addToBasket() {
+      this.btn_press = !this.btn_press
+      setTimeout(() => this.btn_press = !this.btn_press, 200)
       if (!this.itemAddSending) {
         this.itemAddSending = true
 
@@ -184,6 +191,10 @@ export default {
   grid-template-columns: repeat(2, 100px);
   grid-gap: 0px 5px;
   margin: 0 0 5px;
+}
+
+.btn_press {
+  transform: scale(1.2);
 }
 
 </style>

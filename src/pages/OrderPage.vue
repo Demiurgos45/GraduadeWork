@@ -1,5 +1,8 @@
 <template>
-  <main class="content container">
+  <main 
+    v-if="productsCount"
+    class="content container"
+  >
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -122,6 +125,23 @@
         </div>
       </form>
     </section>
+  </main>
+  <main
+    v-else
+    class="content container"
+  >
+    <div class="content__top">
+      <h3> Ваша корзина пуста </h3>
+      <br>
+      Выберите товары в
+      <router-link
+        class="message__link"
+        href="#"
+        :to="{name: 'listPage', params: {id: 0}}"
+      >
+        <b> Каталоге</b>
+      </router-link>
+    </div>
   </main>
 </template>
 

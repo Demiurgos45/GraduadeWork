@@ -207,5 +207,4 @@ export default {
   grid-gap: 40px 10px;
   margin: 0 0 70px;
 }
-
 </style>
