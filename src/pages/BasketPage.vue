@@ -99,15 +99,15 @@ export default {
 
   computed: {
     basketItems() {
-      return this.$store.getters.getBasketItems
+      return this.$store.state.basketStore.userBasket.items
     },
 
     basketPrice() {
-      return this.$store.getters.getBasketPrice
+      return this.$store.getters.basketPrice
     },
 
     productsCount() {
-      return this.$store.getters.getBasketProductsCount
+      return this.$store.getters.basketProductsCount
     }
   },
 

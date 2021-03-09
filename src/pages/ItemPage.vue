@@ -187,7 +187,7 @@ export default {
 
   computed: {
     itemInfo() {
-      return this.$store.getters.getItemInfo
+      return this.$store.state.commonStore.itemInfo
     },
     avaliableQuantity() {
       return this.itemInfo.materials.reduce((sum, item) => sum + item.productsCount, 0)

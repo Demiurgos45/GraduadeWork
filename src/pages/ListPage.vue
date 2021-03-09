@@ -88,7 +88,7 @@ export default {
 
   computed: {
     itemsList() {
-      const list = this.$store.getters.getItemsList
+      const list = this.$store.state.basketStore.itemsList
       return list ? list : []
     },
     itemsPerPage: {
@@ -113,21 +113,21 @@ export default {
       }
     },
     pagesCount() {
-      return this.$store.getters.getPagesCount
+      return this.$store.state.basketStore.pagesCount
     },
     itemsCount() {
-      return this.$store.getters.getItemsCount
+      return this.$store.state.basketStore.itemsCount
     },
     categoriesList() {
-      const categories = this.$store.getters.getCategories
+      const categories = this.$store.state.commonStore.categories
       return categories ? categories : []
     },
     materialsList() {
-      const materials = this.$store.getters.getMaterials
+      const materials = this.$store.state.commonStore.materials
       return materials ? materials : []
     },
     seasonsList() {
-      const seasons = this.$store.getters.getSeasons
+      const seasons = this.$store.state.commonStore.seasons
       return seasons ? seasons : []
     }
   },

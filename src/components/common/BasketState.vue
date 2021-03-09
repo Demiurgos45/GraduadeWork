@@ -25,7 +25,7 @@
 export default {
   computed: {
     itemsCount() {
-      return this.$store.getters.getBasketItemsCount
+      return this.$store.getters.basketItemsCount
     }
   }
 }

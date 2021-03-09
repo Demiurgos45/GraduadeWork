@@ -38,7 +38,7 @@ export default {
 
   computed: {
     errorMessage() {
-      return this.$store.getters.getErrorMessage
+      return this.$store.state.errorPageStore.errorMessage
     }
   }
 }

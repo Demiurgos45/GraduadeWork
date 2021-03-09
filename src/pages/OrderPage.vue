@@ -182,16 +182,15 @@ export default {
 
   computed: {
     itemsList() {
-      return this.$store.getters.getBasketItems
+      return this.$store.state.basketStore.userBasket.items
     },
 
     deliveriesList() {
-      const dList = this.$store.getters.getDeliveries
-      return dList
+      return this.$store.state.orderStore.deliveries
     },
 
     paymentsList() {
-      return this.$store.getters.getPayments
+      return this.$store.state.orderStore.payments
     },
 
     deliveryPrice() {
@@ -203,11 +202,11 @@ export default {
     },
 
     productsCount() {
-      return this.$store.getters.getBasketProductsCount
+      return this.$store.getters.basketProductsCount
     },
 
     basketPrice() {
-      return (this.$store.getters.getBasketPrice + this.deliveryPrice)
+      return (this.$store.getters.basketPrice + this.deliveryPrice)
     }
   },
 
@@ -241,7 +240,7 @@ export default {
     },
 
     sendOrder() {
-      const userAccessKey = this.$store.getters.getUserAccessKey
+      const userAccessKey = this.$store.state.basketStore.userAccessKey
       const data = {
         ...this.formData,
         deliveryTypeId: this.deliveryTypeId,

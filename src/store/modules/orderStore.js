@@ -3,30 +3,18 @@ import axios from 'axios'
 
 export default {
   state: {
-    deliveries: null,
-    payments: null,
+    deliveries: [],
+    payments: [],
     orderInfo: null
   },
 
   getters: {
-    getDeliveries(state) {
-      return state.deliveries || []
-    },
-
-    getPayments(state) {
-      return state.payments || []
-    },
-
-    getOrderInfo(state) {
-      return state.orderInfo
-    },
-
     getOrderTotalPrice(state) {
       if (state.orderInfo) {
         return state.orderInfo.basket.items.reduce((total, item) => (item.price * item.quantity) + total, 0)
       }
       return 0
-    },
+    }
   },
 
   mutations: {

@@ -148,11 +148,11 @@ export default {
   computed: {
 
     userAccessKey() {
-      return this.$store.getters.getUserAccessKey
+      return this.$store.state.basketStore.userAccessKey
     },
 
     orderInfo() {
-      return this.$store.getters.getOrderInfo
+      return this.$store.state.orderStore.orderInfo
     },
 
     deliveryPrice() {
@@ -208,7 +208,7 @@ export default {
       }
     },
 
-    '$store.getters.getUserAccessKey': {
+    '$store.state.basketStore.userAccessKey': {
       handler() {
         this.loadOrderInfo()
       }

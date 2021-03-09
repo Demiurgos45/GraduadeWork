@@ -20,10 +20,10 @@ export default {
 
   computed: {
     showLoading() {
-      return (this.$store.getters.getLoaderStatus > 0)
+      return (this.$store.state.loaderStore.showLoader > 0)
     },
     showDialog() {
-      return this.$store.getters.getShowDialog
+      return this.$store.state.modalDialogStore.showDialog
     }
   },
 

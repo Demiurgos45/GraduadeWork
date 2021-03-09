@@ -28,10 +28,10 @@ export default {
 
   computed: {
     title() {
-      return this.$store.getters.getTitle
+      return this.$store.state.modalDialogStore.title
     },
     messageHtml() {
-      return this.$store.getters.getMessageHtml
+      return this.$store.state.modalDialogStore.messageHtml
     }
   },
 

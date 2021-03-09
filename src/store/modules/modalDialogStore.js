@@ -6,15 +6,7 @@ export default {
   },
 
   getters: {
-    getShowDialog(state) {
-      return state.showDialog
-    },
-    getMessageHtml(state) {
-      return state.messageHtml
-    },
-    getTitle(state) {
-      return state.title
-    }
+    
   },
 
   mutations: {

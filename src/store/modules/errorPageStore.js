@@ -4,9 +4,7 @@ export default {
   },
 
   getters: {
-    getErrorMessage(state) {
-      return state.errorMessage
-    }
+    
   },
 
   mutations: {

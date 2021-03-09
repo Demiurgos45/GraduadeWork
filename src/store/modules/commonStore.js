@@ -10,24 +10,7 @@ export default {
   },
 
   getters: {
-    getCategories(state) {
-      if (state.categories) {
-        return state.categories.filter(category => category.title !== 'test')
-      }
-      return null
-    },
-    getMaterials(state) {
-      if (state.materials) {
-        return state.materials.filter(material => material.title !== 'test')
-      }
-      return null
-    },
-    getSeasons(state) {
-      return state.seasons
-    },
-    getItemInfo(state) {
-      return state.itemInfo
-    }
+    
   },
 
   mutations: {

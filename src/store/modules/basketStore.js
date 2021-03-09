@@ -11,33 +11,15 @@ export default {
   },
 
   getters: {
-    getItemsList(state) {
-      return state.itemsList
-    },
-    getPagesCount(state) {
-      return state.pagesCount
-    },
-    getItemsCount(state) {
-      return state.itemsCount
-    },
-    getBasketProductsCount(state) {
+    basketProductsCount(state) {
       return state.userBasket ? state.userBasket.items.length : 0
     },
-    getBasketItemsCount(state) {
+    basketItemsCount(state) {
       return state.userBasket ? state.userBasket.items.reduce( (sum, item) => sum + item.quantity, 0) : 0
     },
-    getBasketItems(state) {
-      return state.userBasket ? state.userBasket.items : []
-    },
-    getBasketPrice(state) {
+    basketPrice(state) {
       return state.userBasket ? state.userBasket.items.reduce( (sum, item) => sum + item.quantity * item.price, 0): 0
     },
-    getBasketId(state) {
-      return state.userBasket.id
-    },
-    getUserAccessKey(state) {
-      return state.userAccessKey
-    }
   },
 
   mutations: {

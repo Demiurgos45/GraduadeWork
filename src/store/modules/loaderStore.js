@@ -4,9 +4,7 @@ export default {
   },
 
   getters: {
-    getLoaderStatus(state) {
-      return state.showLoader
-    }
+    
   },
 
   mutations: {
