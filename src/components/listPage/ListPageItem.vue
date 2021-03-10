@@ -112,62 +112,28 @@ export default {
   },
 
   methods: {
-    addToBasket() {
+    async addToBasket() {
       this.btn_press = !this.btn_press
       setTimeout(() => this.btn_press = !this.btn_press, 200)
       if (!this.itemAddSending) {
         this.itemAddSending = true
-
-        this.$store.dispatch('addToBasket', {
+    
+        await this.$store.dispatch('addToBasket', {
           productId: this.item.id,
           colorId: this.selectedColorId,
           sizeId: this.selectedSizeId,
           quantity: 1
         })
-          .then( () => {
-            this.$store.dispatch('loadBasket')
-            this.itemAddSending = false
-          })
-          .catch( (error) => {
-            this.itemAddSending = false
-            if ((error.response) &&
-                (error.response.status === 400) &&
-                (JSON.stringify(error.response)).indexOf('sizeId')) {
-              this.$store.dispatch('showDialog', {
-                title: 'Приносим извинения',
-                messageHtml: 'Выбранного размера нет в наличии'
-              })
-            }
-            else {
-              this.$store.commit('setErrorMessage', error)
-              this.$store.dispatch('hideLoader')
-              this.$router.push({name: 'errorPage'})
-            }
-          })
+        this.itemAddSending = false
       }
     }
   },
 
-  created() {
-    this.$store.dispatch('showLoader')
-    this.$store.commit('delErrorMessage')
-
-    this.$store.dispatch('getItemInfo', this.item.id)
-      .then( (response) => {
-        this.$store.dispatch('hideLoader')
-        this.sizesList = response.sizes
-        this.itemSize = this.sizesList[0].id
-      })
-      .catch( (error) => {
-        this.$store.commit('setErrorMessage', error)
-        this.$store.dispatch('hideLoader')
-        this.$router.push({name: 'errorPage'})
-      })
+  async created() {
+    const response = await this.$store.dispatch('getItemInfo', this.item.id)
+    this.sizesList = response.sizes
+    this.itemSize = this.sizesList[0].id
   },
-
-  mounted() {
-    
-  }
 }
 </script>
 

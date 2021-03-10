@@ -41,128 +41,118 @@ export default {
   },
 
   actions: {
-    loadBasket(context) {
-      return new Promise ( (resolve, reject) => {
-        axios
-          .get(API_BASE_URL + '/baskets', {
-            params: {
-              userAccessKey: context.state.userAccessKey
-            }
-          })
-          .then( (response) => {
-            context.commit('setUserBasket', response.data)
-            resolve()
-          })
-          .catch( (error) => {
-            reject(error)
-          })
-      })
-    },
-
-    getUserAccessKey(context) {
-      return new Promise ( (resolve, reject) => {
-        let userAccessKey = localStorage.getItem('userAccessKey')
-        
-        if (!userAccessKey) {
-          axios
-            .get(API_BASE_URL + '/users/accessKey')
-            .then( response => {
-              context.commit('setUserAccessKey', response.data.accessKey)
-              localStorage.setItem('userAccessKey', response.data.accessKey)
-              resolve()
-            })
-            .catch( (error) => {
-              reject(error)
-            })
-        } 
-        else {
-          context.commit('setUserAccessKey', userAccessKey)
-          resolve(context.state.userAccessKey)
-        }
-      })
-    },
-
-    loadItems(context, params) {
-      return new Promise ( (resolve, reject) => {
-        axios
-          .get(API_BASE_URL + '/products',
-            {
-              params
-            }       
-          )
-          .then( response => {
-            context.commit('setItemsList', response.data.items)
-            context.commit('setPagesCount', response.data.pagination.pages)
-            context.commit('setItemsCount', response.data.pagination.total)
-            resolve(context.state.itemsList)
-          })
-          .catch( (error) => {
-            context.commit('setItemsList', [])
-            context.commit('setPagesCount', 0)
-            reject(error)
-          })
-      })     
-    },
-
-    addToBasket(context, params) {
-      return new Promise ( (resolve, reject) => {
-        axios
-          .post(API_BASE_URL + '/baskets/products',
-            {...params},
-            {
-              params: {
-                userAccessKey: context.state.userAccessKey
-              }
-          })
-          .then( () => {
-            resolve()
-          })
-          .catch( error => {
-            reject(error)
-          })
-      })
-    },
-
-    updateQuantity(context, params) {
-      if (params.quantity > 0) {
-        axios
-          .put(API_BASE_URL + '/baskets/products',
-            {...params},
-            {
-              params: {
-                userAccessKey: context.state.userAccessKey
-              }
-            })
-          .then( (response) => {
-            context.commit('setUserBasket', response.data)
-          })
-          .catch( (error) => {
-            console.log(error)
-          })
+    async loadBasket({commit, state, dispatch}) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/baskets', {
+          params: {
+            userAccessKey: state.userAccessKey
+          }
+        })
+        commit('setUserBasket', response.data)
+        commit('subLoader')
+      }
+      catch(error) {
+        commit('subLoader')
+        dispatch('showError', error)
       }
     },
 
-    deleteItem(context, id) {
-      axios
-        .delete(API_BASE_URL + '/baskets/products', {
+    async getUserAccessKey({commit, dispatch}) {
+      let userAccessKey = localStorage.getItem('userAccessKey')
+
+      if (!userAccessKey) {
+        commit('addLoader')
+        try {
+          const response = await axios.get(API_BASE_URL + '/users/accessKey')
+          commit('setUserAccessKey', response.data.accessKey)
+          localStorage.setItem('userAccessKey', response.data.accessKey)
+          commit('subLoader')
+        }
+        catch(error) {
+          commit('subLoader')
+          dispatch('showError', error)
+        }
+      }
+      else {
+        commit('setUserAccessKey', userAccessKey)
+      }
+    },
+
+    async loadItems({commit, dispatch}, params) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/products', { params })
+        commit('setItemsList', response.data.items)
+        commit('setPagesCount', response.data.pagination.pages)
+        commit('setItemsCount', response.data.pagination.total)
+        commit('subLoader')
+      }
+      catch(error) {
+        commit('subLoader')
+        dispatch('showError', error)
+      }
+    },
+
+    async addToBasket({state, commit, dispatch}, params) {
+      try {
+        const response = await axios.post(API_BASE_URL + '/baskets/products',
+          {...params},
+          {
+            params: {
+              userAccessKey: state.userAccessKey
+            }
+        })
+        commit('setUserBasket', response.data)
+      }
+      catch(error) {
+        if ((error.response) &&
+            (error.response.status === 400) &&
+            (JSON.stringify(error.response)).indexOf('sizeId')) {
+          dispatch('showDialog', {
+            title: 'Приносим извинения',
+            messageHtml: 'Выбранного размера нет в наличии'
+          })
+        }
+        else {
+          dispatch('showError', error)
+        }
+      }
+    },
+
+    async updateQuantity({state, commit, dispatch}, params) {
+      if (params.quantity > 0) {
+        try {
+          const response = await axios.put(API_BASE_URL + '/baskets/products',
+            {...params},
+            {
+              params: {
+                userAccessKey: state.userAccessKey
+              }
+            })
+            commit('setUserBasket', response.data)
+          }
+          catch(error) {
+            dispatch('showError', error)
+          }
+      }
+    },
+
+    async deleteItem({state, commit, dispatch}, id) {
+      try {
+        const response = await axios.delete(API_BASE_URL + '/baskets/products', {
           params: {
-            userAccessKey: context.state.userAccessKey
+            userAccessKey: state.userAccessKey
           },
           data: {
             basketItemId: id
           }
         })
-        .then( (response) => {
-          context.commit('setUserBasket', response.data)
-        })
-        .catch( (error) => {
-          console.log(error)
-        })
-    },
-
-    clearBasket(context) {
-      context.commit('setUserBasket', null)
+        commit('setUserBasket', response.data)
+      }
+      catch(error) {
+        dispatch('showError', error)
+      }
     }
-    
   }
 }

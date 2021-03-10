@@ -24,68 +24,35 @@ export default {
     },
     showDialog() {
       return this.$store.state.modalDialogStore.showDialog
+    },
+    errorStatus() {
+      return this.$store.state.errorPageStore.errorStatus
     }
   },
 
-  mounted() {
-    this.$store.dispatch('showLoader')
-    this.$store.dispatch('getUserAccessKey')
-      .then( () => {
-        this.$store.dispatch('loadBasket')
-          .then( () => {
-
-          })
-          .catch( () => {
-            console.log('Can\'t load basket')
-          })
-          .then( () => {
-            this.$store.dispatch('hideLoader')
-          })
-      })
-      .catch( () => {
-        console.log('Can\'t receive userAccessKey')
-        this.$store.dispatch('hideLoader')
-      })
-
-    
-    this.$store.dispatch('showLoader')
-    this.$store.dispatch('getMaterials')
-      .then( () => {
-        this.$store.dispatch('hideLoader')
-      })
-      .catch( (error) => {
-        this.$store.commit('setErrorMessage', error)
-        this.$store.dispatch('hideLoader')
+  methods: {
+    checkErrorStatus() {
+      if ((this.errorStatus) && (this.$router.currentRoute.name !== 'errorPage')) {
+        this.$store.commit('setErrorStatus', false)
         this.$router.push({name: 'errorPage'})
-      })
+      }
+    }
+  },
 
-    this.$store.dispatch('showLoader')
+  async mounted() {
+    await this.$store.dispatch('getUserAccessKey')
+    this.$store.dispatch('loadBasket')
+    this.$store.dispatch('getMaterials')
     this.$store.dispatch('getCategories')
-      .then( response => {
-        if (!response) {
-          console.log('Can\'t receive categories')
-        }
-      })
-      .catch( () => {
-
-      })
-      .then( () => {
-        this.$store.dispatch('hideLoader')
-      })
-    
-    this.$store.dispatch('showLoader')
     this.$store.dispatch('getSeasons')
-      .then( response => {
-        if (!response) {
-          console.log('Can\'t receive seasons')
-        }
-      })
-      .catch( () => {
+  },
 
-      })
-      .then( () => {
-        this.$store.dispatch('hideLoader')
-      })
+  watch: {
+    errorStatus: {
+      handler() {
+        this.checkErrorStatus()
+      }
+    }
   }
 }
 </script>

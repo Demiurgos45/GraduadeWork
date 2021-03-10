@@ -77,8 +77,7 @@ export default {
         categoryId: +this.$route.params.id || 0,
         materialIds: [],
         seasonIds: []
-      },
-      isLoadingError: false
+      }
     }
   },
 
@@ -134,29 +133,13 @@ export default {
 
   methods: {
     loadItems() {
-      this.$store.dispatch('showLoader')
-      this.$store.commit('delErrorMessage')
-
       const filter = {
         ...this.filterState,
         page: this.currentPage,
         limit: this.itemsPerPage
       }
-
       this.$store.dispatch('loadItems', filter)
-        .then( () => {
-          this.$store.dispatch('hideLoader')
-        })
-        .catch( (error) => {
-          this.$store.commit('setErrorMessage', error)
-          this.$store.dispatch('hideLoader')
-          this.$router.push({name: 'errorPage'})
-        })
     }
-  },
-
-  mounted() {
-    
   },
 
   watch: {

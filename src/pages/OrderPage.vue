@@ -211,35 +211,17 @@ export default {
   },
 
   methods: {
-    loadDeliveryTypes() {
-      this.$store.dispatch('showLoader')
-      this.$store.dispatch("loadDeliveries")
-        .then( () => {
-          this.deliveryTypeId = this.deliveriesList[0].id
-          this.$store.dispatch('hideLoader')
-        })
-        .catch( (error) => {
-          this.$store.commit('setErrorMessage', error)
-          this.$store.dispatch('hideLoader')
-          this.$router.push({name: 'errorPage'})
-        })
+    async loadDeliveryTypes() {
+      await this.$store.dispatch("loadDeliveries")
+      this.deliveryTypeId = this.deliveriesList[0].id
     },
 
-    loadPaymentTypes() {
-      this.$store.dispatch('showLoader')
-      this.$store.dispatch("loadPayments", this.deliveryTypeId)
-        .then( () => {
-          this.paymentTypeId = this.paymentsList[0].id
-          this.$store.dispatch('hideLoader')
-        })
-        .catch( (error) => {
-          this.$store.commit('setErrorMessage', error)
-          this.$store.dispatch('hideLoader')
-          this.$router.push({name: 'errorPage'})
-        })
+    async loadPaymentTypes() {
+      await this.$store.dispatch("loadPayments", this.deliveryTypeId)
+      this.paymentTypeId = this.paymentsList[0].id
     },
 
-    sendOrder() {
+    async sendOrder() {
       const userAccessKey = this.$store.state.basketStore.userAccessKey
       const data = {
         ...this.formData,
@@ -247,15 +229,16 @@ export default {
         paymentTypeId: this.paymentTypeId
       }
 
-      this.$store.dispatch('sendOrder', {userAccessKey, data})
-        .then( (response) => {
-          this.$store.dispatch('clearBasket')
-          this.$router.push({name: 'orderInfoPage', params: {id: response.data.id}})
-        })
-        .catch( (error) => {
-          this.formError = error.response.data.error.request || {}
-          this.errorMessage = error.response.data.error.message
-        })
+      const response = await this.$store.dispatch('sendOrder', {userAccessKey, data})
+
+      if (response.data.error) {
+        this.formError = response.data.error.request || {}
+        this.errorMessage = response.data.error.message
+      }
+      else {
+        this.$store.commit('setUserBasket', null)
+        this.$router.push({name: 'orderInfoPage', params: {id: response.data.id}})
+      }
     }
   },
 

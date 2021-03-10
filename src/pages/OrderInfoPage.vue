@@ -175,27 +175,22 @@ export default {
   },
 
   methods: {
-    loadOrderInfo() {
+    async loadOrderInfo() {
       if ((!this.orderInfo) || (this.orderId !== this.orderInfo.id)) {
-        this.$store.dispatch('showLoader')
-        this.$store.dispatch('getOrderInfo', {
+        const response = await this.$store.dispatch('getOrderInfo', {
           id: this.orderId,
           userAccessKey: this.userAccessKey
         })
-          .then( () => {
-            this.$store.dispatch('hideLoader')
-          })
-          .catch( (error) => {
-            if ((error.response.status) && (error.response.status === 400)) {
-              this.$store.dispatch('hideLoader')
-              this.errMessage = error.response.data.error.message
-            }
-            else {
-              this.$store.commit('setErrorMessage', error)
-              this.$store.dispatch('hideLoader')
-              this.$router.push({name: 'errorPage'})
-            }
-          })
+
+        if (response) {
+          if ((response.response.status) && (response.response.status === 400)) {
+              this.errMessage = response.response.data.error.message
+          }
+          else {
+            this.$store.dispatch('showError', response)
+          }
+        }
+        
       }
     }
   },

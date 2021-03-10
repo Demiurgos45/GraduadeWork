@@ -8,15 +8,6 @@ export default {
     orderInfo: null
   },
 
-  getters: {
-    getOrderTotalPrice(state) {
-      if (state.orderInfo) {
-        return state.orderInfo.basket.items.reduce((total, item) => (item.price * item.quantity) + total, 0)
-      }
-      return 0
-    }
-  },
-
   mutations: {
     setDeliveries(state, deliveries) {
       state.deliveries = deliveries
@@ -30,81 +21,79 @@ export default {
   },
 
   actions: {
-    loadDeliveries(context) {
-      return new Promise ( (resolve, reject) => {
-        axios
-          .get(API_BASE_URL + '/deliveries')
-          .then( (response) => {
-            context.commit('setDeliveries', response.data)
-            resolve()
-          })
-          .catch( (error) => {
-            reject(error)
-          })
-      })
+    async loadDeliveries({commit, dispatch}) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/deliveries')
+        commit('setDeliveries', response.data)
+        commit('subLoader')
+      }
+      catch(error) {
+        commit('subLoader')
+        dispatch('showError', error)
+      }
     },
 
-    loadPayments(context, deliveryTypeId) {
-      return new Promise ( (resolve, reject) => {
-        axios
-          .get(API_BASE_URL + '/payments', {
+    async loadPayments({commit, dispatch}, deliveryTypeId) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/payments', {
+          params: {
+            deliveryTypeId
+          }
+        })
+        commit('setPayments', response.data)
+        commit('subLoader')
+      }
+      catch(error) {
+        commit('subLoader')
+        dispatch('showError', error)
+      }
+    },
+
+    async sendOrder({commit, dispatch}, data) {
+      commit('addLoader')
+      try {
+        const response = await axios.post(API_BASE_URL + '/orders',
+          {
+            ...data.data
+          },
+          {
             params: {
-              deliveryTypeId
+              userAccessKey: data.userAccessKey
             }
-          })
-          .then( (response) => {
-            context.commit('setPayments', response.data)
-            resolve()
-          })
-          .catch( (error) => {
-            reject(error)
-          })
-      })
+          }
+        )
+        commit('setOrderInfo',response.data)
+        commit('subLoader')
+        return response
+      }
+      catch(error) {
+        commit('subLoader')
+        if (error.response) {
+          return error.response
+        }
+        dispatch('showError', error)
+        return null
+      }
     },
 
-    sendOrder(context, data) {
-      return new Promise ( (resolve, reject) => {
-        axios
-          .post(API_BASE_URL + '/orders',
-            {
-              ...data.data
-            },
-            {
-              params: {
-                userAccessKey: data.userAccessKey
-              }
-            })
-          .then( (response) => {
-            context.commit('setOrderInfo',response.data)
-            resolve(response)
-          })
-          .catch( (error) => {
-            reject(error)
-          })
-      })
-    },
-
-    getOrderInfo(context, data) {
-      return new Promise ( (resolve, reject) => {
-        if (data.userAccessKey) {
-          axios
-            .get(API_BASE_URL + '/orders/' + data.id, {
-              params: {
-                userAccessKey: data.userAccessKey
-              }
-            })
-            .then( (response) => {
-              context.commit('setOrderInfo',response.data)
-              resolve()
-            })
-            .catch( (error) => {
-              reject(error)
-            })
-        }
-        else {
-          resolve()
-        }
-      })
+    async getOrderInfo({commit}, data) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/orders/' + data.id, {
+          params: {
+            userAccessKey: data.userAccessKey
+          }
+        })
+        commit('setOrderInfo',response.data)
+        commit('subLoader')
+        return null
+      }
+      catch(error) {
+        commit('subLoader')
+        return error
+      }
     }
   }
 }

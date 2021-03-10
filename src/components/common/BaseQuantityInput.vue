@@ -61,7 +61,10 @@ export default {
       return this.currentQuantity < 2
     },
     btnPlusDisabled() {
-      return this.currentQuantity >= this.maxQuantity
+      if (this.maxQuantity) {
+        return this.currentQuantity >= this.maxQuantity
+      }
+      return false
     }
   },
 

@@ -105,7 +105,8 @@ export default {
     },
 
     avaliableQuantity() {
-      return this.item.product.materials.reduce((sum, item) => sum + item.productsCount, 0)
+      //return this.item.product.materials.reduce((sum, item) => sum + item.productsCount, 0)
+      return null
     }
   },
 

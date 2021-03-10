@@ -29,67 +29,59 @@ export default {
   },
 
   actions: {
-    getMaterials(context) {
-      return new Promise ( (resolve, reject) => {
-        axios
-          .get(API_BASE_URL + '/materials')
-          .then( response => {
-            context.commit('setMaterials', response.data.items)
-            resolve()
-          })
-          .catch( (error) => {
-            reject(error)
-          })
-      })
+    async getMaterials({commit, dispatch}) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/materials')
+        commit('setMaterials', response.data.items)
+        commit('subLoader')
+      }
+      catch(error) {
+        commit('subLoader')
+        dispatch('showError', error)
+      }
     },
 
-    getCategories(context) {
-      return new Promise ( (resolve) => {
-        axios
-          .get(API_BASE_URL + '/productCategories')
-          .then( response => {
-            const categories = response.data.items
-            categories.unshift({id: 0, title: 'Все категории'})
-            context.commit('setCategories', categories)
-          })
-          .catch( () => {
-            // There's nothing to do here yet
-          })
-          .then( () => {
-            resolve(context.state.categories)
-          })
-      })
+    async getCategories({commit, dispatch}) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/productCategories')
+        let categories = response.data.items
+        categories.unshift({id: 0, title: 'Все категории'})
+        commit('setCategories', categories)
+        commit('subLoader')
+      }
+      catch(error) {
+        commit('subLoader')
+        dispatch('showError', error)
+      }
     },
 
-    getSeasons(context) {
-      return new Promise ( (resolve) => {
-        axios
-          .get(API_BASE_URL + '/seasons')
-          .then( response => {
-            context.commit('setSeasons', response.data.items)
-          })
-          .catch( () => {
-            // There's nothing to do here yet
-          })
-          .then( () => {
-            resolve(context.state.seasons)
-          })
-      })
+    async getSeasons({commit, dispatch}) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/seasons')
+        commit('setSeasons', response.data.items)
+        commit('subLoader')
+      }
+      catch(error) {
+        commit('subLoader')
+        dispatch('showError', error)
+      }
     },
 
-    getItemInfo(context, id) {
-      return new Promise ( (resolve, reject) => {
-        axios
-          .get(API_BASE_URL + '/products/' + id)
-          .then( (response) => {
-            context.commit('setItemInfo', response.data)
-            resolve(response.data)
-          })
-          .catch( (error) => {
-            context.commit('setItemInfo', {})
-            reject(error)
-          })
-      })
+    async getItemInfo({commit, dispatch}, id) {
+      commit('addLoader')
+      try {
+        const response = await axios.get(API_BASE_URL + '/products/' + id)
+        commit('setItemInfo', response.data)
+        commit('subLoader')
+        return(response.data)
+      }
+      catch(error) {
+        commit('subLoader')
+        dispatch('showError', error)
+      }
     }
-  },
+  }
 }

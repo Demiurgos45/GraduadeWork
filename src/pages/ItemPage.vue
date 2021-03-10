@@ -1,5 +1,5 @@
 <template>
-  <main 
+  <main
     v-if="!isInfoLoading"
     class="content container"
   >
@@ -190,7 +190,8 @@ export default {
       return this.$store.state.commonStore.itemInfo
     },
     avaliableQuantity() {
-      return this.itemInfo.materials.reduce((sum, item) => sum + item.productsCount, 0)
+      //return this.itemInfo.materials.reduce((sum, item) => sum + item.productsCount, 0)
+      return null
     },
     selectedColorId: {
       get() {
@@ -238,63 +239,30 @@ export default {
   },
 
   methods: {
-    getItemInfo() {
+    async getItemInfo() {
       if (!this.isInfoLoading) {
         this.isInfoLoading = true
-        this.$store.dispatch('showLoader')
-        this.$store.commit('delErrorMessage')
-
-        this.$store.dispatch('getItemInfo', this.$route.params.id)
-          .then( () => {
-            this.$store.dispatch('hideLoader')
-            this.isInfoLoading = false
-          })
-          .catch( (error) => {
-            this.$store.commit('setErrorMessage', error)
-            this.isInfoLoading = false
-            this.$store.dispatch('hideLoader')
-            this.$router.push({name: 'errorPage'})
-          })
+        await this.$store.dispatch('getItemInfo', this.$route.params.id)
+        this.isInfoLoading = false
       }
     },
 
-    addToBasket() {
+    async addToBasket() {
       if (!this.itemAddSending) {
         this.itemAdded = false
         this.itemAddSending = true
-
-        this.$store.dispatch('addToBasket', {
+        await this.$store.dispatch('addToBasket', {
           productId: this.itemInfo.id,
           colorId: this.selectedColorId,
           sizeId: this.selectedSizeId,
           quantity: this.itemQuantity
         })
-          .then( () => {
-            this.$store.dispatch('loadBasket')
-            this.itemAdded = true
-            this.itemAddSending = false
-            setTimeout( () => {
-                this.itemAdded = false
-                //this.$refs.btnAdd.blur()
-              },
-              2000)
-          })
-          .catch( (error) => {
-            this.itemAddSending = false
-            if ((error.response) &&
-                (error.response.status === 400) &&
-                (JSON.stringify(error.response)).indexOf('sizeId')) {
-              this.$store.dispatch('showDialog', {
-                title: 'Приносим извинения',
-                messageHtml: 'Выбранного размера нет в наличии'
-              })
-            }
-            else {
-              this.$store.commit('setErrorMessage', error)
-              this.$store.dispatch('hideLoader')
-              this.$router.push({name: 'errorPage'})
-            }
-          })
+        this.itemAdded = true
+        this.itemAddSending = false
+        setTimeout( () => {
+          this.itemAdded = false
+          //this.$refs.btnAdd.blur()
+        },2000)
       }
     }
   },
