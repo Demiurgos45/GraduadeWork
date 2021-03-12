@@ -195,7 +195,8 @@ export default {
     },
     selectedColorId: {
       get() {
-        if ((+this.routerColor === 0) && (this.itemInfo)) {
+        if((+this.routerColor === 0) ||
+           (!this.itemInfo.colors.find(clr => clr.color.id === this.routerColor))) {
           return this.itemInfo.colors[0].color.id
         }
         return +this.routerColor
@@ -273,7 +274,7 @@ export default {
       handler() {
         this.getItemInfo()
       }
-    }
+    },
   }
 }
 </script>
