@@ -176,7 +176,6 @@ export default {
 
   data() {
     return {
-      routerColor: +this.$route.params.color,
       itemQuantity: 1,
       itemSize: 0,
       itemAddSending: false,
@@ -186,6 +185,9 @@ export default {
   },
 
   computed: {
+    routerColor() {
+      return +this.$route.params.color
+    },
     itemInfo() {
       return this.$store.state.commonStore.itemInfo
     },
@@ -274,7 +276,7 @@ export default {
       handler() {
         this.getItemInfo()
       }
-    },
+    }
   }
 }
 </script>
